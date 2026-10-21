@@ -267,26 +267,37 @@ function brandBand() {
 }
 
 function homePage(articles) {
-  const journalRows = articles.slice(0, 6).map((article, index) => '<a class="journal-row" href="/articles/' + article.slug + '/"><span class="journal-number">' + String(index + 1).padStart(2, '0') + '</span><span class="journal-copy"><small>' + escapeHtml(article.category) + ' / ' + escapeHtml(article.updated) + '</small><strong>' + escapeHtml(article.title) + '</strong></span><span class="journal-time">' + escapeHtml(article.readTime) + ' ↗</span></a>').join('');
-  const topicRows = keywordGroups.slice(0, 6).map((group, index) => '<a class="topic-line" href="' + group.href + '"><span>' + String(index + 1).padStart(2, '0') + '</span><strong>' + escapeHtml(group.title) + '</strong><em>' + group.keywords.length + ' 个词</em><p>' + escapeHtml(group.description) + '</p></a>').join('');
+  const latestCards = articles.slice(0, 6).map(articleCard).join('');
+  const quickLinks = [
+    ['机场推荐与测评', '机场怎么选、机场排行与核验方法', '/guides/', '推荐'],
+    ['IPLC 与专线', '直连、中转、BGP 和专线怎么比较', '/articles/iplc-vs-transit/', '线路'],
+    ['订阅与客户端', 'Clash、小火箭与各平台导入指南', '/clients/', '配置'],
+    ['地区节点选择', '香港、日本、新加坡与美国节点用途', '/regions/', '地区'],
+    ['连接故障排查', '订阅失败、延迟高与网页打不开', '/questions/', '排障'],
+    ['AI 工具目录', '对话、研究、办公与创作官方入口', '/ai-tools/', '工具']
+  ].map((item) => '<a class="home-quick-card" href="' + item[2] + '"><span>' + item[3] + '</span><h3>' + item[0] + '</h3><p>' + item[1] + '</p><b>查看专题 →</b></a>').join('');
+  const keywordSections = [
+    ['选择与口碑', '/guides/', ['机场推荐', '机场排行', '机场测评', '机场怎么样', '稳定机场', '高速机场', '晚高峰不卡机场', '机场选择指南']],
+    ['线路与节点', '/articles/iplc-vs-transit/', ['IPLC 机场', '专线机场', '中转机场', 'BGP 机场', '原生 IP 机场', '住宅 IP 机场', '节点倍率', '日本游戏机场']],
+    ['客户端配置', '/clients/', ['Clash 机场', 'Shadowrocket 机场', 'v2rayN 机场', '机场订阅', '订阅链接', '多设备机场', 'Windows 机场', 'iOS 机场']],
+    ['场景与排障', '/questions/', ['ChatGPT 机场', '流媒体机场', 'YouTube 机场', '跨境电商机场', '机场无法连接', '更新订阅失败', '延迟高怎么办', '机场优惠码']]
+  ].map((section) => '<article class="home-keyword-group"><h3><a href="' + section[1] + '">' + section[0] + ' <span>→</span></a></h3><div class="keyword-cloud">' + section[2].map((keyword) => '<a href="' + section[1] + '">' + keyword + '</a>').join('') + '</div></article>').join('');
   const content = [
-    '<section class="dossier-hero"><div class="container dossier-layout">',
-    '<aside class="dossier-rail"><span>ISSUE</span><strong>01</strong><i></i><small>2026 / KNOWLEDGE ARCHIVE</small></aside>',
-    '<div class="dossier-copy"><p class="dossier-label">独立机场知识档案 · 持续修订</p><h1>不做复制榜单，<br><em>只做能查证的答案。</em></h1><p>选择、线路、倍率、客户端、AI、流媒体与故障排查，被整理成可以长期更新的档案，而不是又一个相似的推荐首页。</p><div class="dossier-actions"><a href="/articles/">翻阅最新文章</a><a href="/topics/">打开专题索引</a></div><div class="dossier-meta"><span>148 / 搜索词</span><span>22 / 内容页面</span><span>09 / 专题组</span></div></div>',
-    '<div class="dossier-panel"><div class="panel-stamp">START HERE</div><a href="/guides/"><b>01</b><span>第一次来<br><strong>机场怎么选</strong></span><i>→</i></a><a href="/questions/"><b>02</b><span>遇到问题<br><strong>按现象排查</strong></span><i>→</i></a><a href="/compare/"><b>03</b><span>购买之前<br><strong>横向对比</strong></span><i>→</i></a><a href="/ai-tools/"><b>04</b><span>工作效率<br><strong>AI 工具目录</strong></span><i>→</i></a></div>',
+    '<section class="classic-home-hero"><div class="container classic-home-grid">',
+    '<figure class="network-globe"><img src="/assets/network-globe.svg" width="720" height="560" alt="全球线路与节点连接示意图"><figcaption>全球线路示意 · 非实时测速数据</figcaption></figure>',
+    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>把机场选择、配置与排障，整理成一套可长期查阅的指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。这里不复制其他网站的品牌榜单，只提供可核验的选择方法和你自己的品牌入口。</p><div class="hero-actions"><a class="btn btn-primary" href="/guides/">查看机场选择指南</a><a class="btn btn-ghost" href="/articles/">阅读最新文章</a></div><div class="classic-home-facts"><span><b>148</b> 个关键词专题</span><span><b>56</b> 个 AI 工具入口</span><span><b>7</b> 篇首发长文</span></div></div>',
     '</div></section>',
-    '<div class="word-tape"><div><span>机场推荐</span><span>IPLC 专线</span><span>节点倍率</span><span>Clash 配置</span><span>原生 IP</span><span>晚高峰排障</span><span>AI 工具</span><span>流媒体解锁</span></div></div>',
-    '<section class="section home-index"><div class="container"><div class="home-section-head"><span>01 / FIELD INDEX</span><h2>从哪一页开始，<br>取决于你正在做什么。</h2><a href="/topics/">完整目录 ↗</a></div><div class="ledger-grid"><a href="/brands/"><span>A</span><strong>品牌档案</strong><p>集中维护自有品牌资料、线路和套餐信息。</p></a><a href="/questions/"><span>B</span><strong>故障问题库</strong><p>订阅、节点、连接、延迟与客户端逐层排查。</p></a><a href="/regions/"><span>C</span><strong>地区与线路</strong><p>香港、日本、新加坡、美国及专项线路选择。</p></a><a href="/risk/"><span>D</span><strong>风险观察</strong><p>记录跑路信号与核验方法，不制造传闻。</p></a></div></div></section>',
-    '<section class="section home-journal"><div class="container journal-layout"><div class="journal-title"><span>02 / LATEST NOTES</span><h2>本期<br>编辑手记</h2><p>文章按问题更新，不以凑数量为目标。</p><a href="/articles/">查看全部文章 →</a></div><div class="journal-list">' + journalRows + '</div></div></section>',
-    '<section class="section home-topic-ledger"><div class="container"><div class="home-section-head"><span>03 / TOPIC LEDGER</span><h2>关键词被放进目录，<br>而不是塞满首页。</h2><a href="/topics/">全部 148 个词 ↗</a></div><div class="topic-ledger">' + topicRows + '</div></div></section>',
-    '<section class="section-sm"><div class="container"><div class="home-brand-note"><span>OWN BRAND / NO THIRD-PARTY LIST</span><h2>品牌推广位只属于你的品牌。</h2><p>不放参考站的推荐，不放任何个人联系方式；品牌资料准备好后，再从统一配置中发布。</p><a href="/brand/">查看品牌档案结构 →</a></div></div></section>'
+    '<section class="home-quick-section"><div class="container"><div class="section-head"><div><p class="eyebrow">快速开始</p><h2 class="section-title">按你现在的问题进入</h2></div><a class="text-link" href="/topics/">浏览完整专题目录 →</a></div><div class="home-quick-grid">' + quickLinks + '</div></div></section>',
+    '<section class="section home-latest"><div class="container"><div class="section-head"><div><p class="eyebrow">最近更新</p><h2 class="section-title">围绕真实问题持续补充</h2><p class="section-lead">从新手选择到订阅导入，从线路差异到晚高峰排查，每篇文章都保留清晰入口。</p></div><a class="text-link" href="/articles/">全部文章 →</a></div><div class="article-grid">' + latestCards + '</div></div></section>',
+    '<section class="section home-keywords"><div class="container"><div class="section-head"><div><p class="eyebrow">常用检索</p><h2 class="section-title">机场关键词与问题入口</h2><p class="section-lead">常见搜索词按主题分组，点击即可进入对应指南，不用在一长串词里寻找答案。</p></div><a class="text-link" href="/topics/">查看全部 148 个词 →</a></div><div class="home-keyword-grid">' + keywordSections + '</div></div></section>',
+    '<section class="section-sm"><div class="container">' + brandBand() + '</div></section>'
   ].join('');
   return layout({
     title: config.siteName,
     description: config.description,
     path: '/',
     content,
-    bodyClass: 'home-page',
+    bodyClass: 'home-classic',
     schema: { '@context': 'https://schema.org', '@type': 'WebSite', name: config.siteName, url: config.baseUrl, description: config.description }
   });
 }
@@ -437,6 +448,7 @@ async function build() {
   await fs.mkdir(path.join(outDir, 'assets'), { recursive: true });
   await fs.copyFile(path.join(root, 'src', 'styles.css'), path.join(outDir, 'assets', 'styles.css'));
   await fs.copyFile(path.join(root, 'src', 'app.js'), path.join(outDir, 'assets', 'app.js'));
+  await fs.copyFile(path.join(root, 'src', 'network-globe.svg'), path.join(outDir, 'assets', 'network-globe.svg'));
 
   const articles = await readArticles();
   await writePage('', homePage(articles));

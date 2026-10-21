@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 560" role="img" aria-labelledby="title desc">
+  <title id="title">全球线路与节点连接示意图</title>
+  <desc id="desc">深蓝色地球、经纬线、连接弧线以及香港、日本、新加坡、美国和欧洲节点。</desc>
+  <defs>
+    <radialGradient id="ocean" cx="36%" cy="28%" r="78%">
+      <stop offset="0" stop-color="#425b7e"/>
+      <stop offset="0.58" stop-color="#243b5a"/>
+      <stop offset="1" stop-color="#17283e"/>
+    </radialGradient>
+    <linearGradient id="orbit" x1="70" y1="80" x2="650" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7757ff"/>
+      <stop offset="0.5" stop-color="#16a8dd"/>
+      <stop offset="1" stop-color="#2bbf83"/>
+    </linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="20" stdDeviation="20" flood-color="#263b59" flood-opacity="0.2"/>
+    </filter>
+    <clipPath id="globeClip"><circle cx="360" cy="280" r="190"/></clipPath>
+  </defs>
+
+  <g opacity=".5" fill="none" stroke="#d7d4ea">
+    <circle cx="360" cy="280" r="246"/>
+    <circle cx="360" cy="280" r="226" stroke-dasharray="3 13"/>
+  </g>
+
+  <circle cx="360" cy="280" r="190" fill="url(#ocean)" filter="url(#shadow)"/>
+  <g clip-path="url(#globeClip)">
+    <g fill="none" stroke="#8da4c0" stroke-opacity=".34" stroke-width="1.4">
+      <ellipse cx="360" cy="280" rx="144" ry="190"/>
+      <ellipse cx="360" cy="280" rx="78" ry="190"/>
+      <ellipse cx="360" cy="280" rx="190" ry="71"/>
+      <ellipse cx="360" cy="280" rx="190" ry="137"/>
+      <path d="M170 280h380M360 90v380"/>
+    </g>
+
+    <g fill="#6e83a0" fill-opacity=".68">
+      <path d="M228 142l38-24 50 4 27 22-9 25-36 6-12 24-28 10-24-17-32-8-10-23z"/>
+      <path d="M305 205l31-17 43 7 18 22 35 5 20 27-12 28-29 4-15 20-28-8-19-31-31-19-24-14z"/>
+      <path d="M388 123l49-6 36 15 13 25-18 15-21-8-20 15-36-7-19-25z"/>
+      <path d="M440 201l35 10 20 24-8 31-22 11-7 34-23 26-21-9 6-31-18-21 14-25-11-22z"/>
+      <path d="M287 315l31 8 19 26-13 34-18 14-5 31-18 13-16-20 5-30-18-27 10-31z"/>
+      <path d="M470 356l32 4 18 20-12 19-28-3-18-18z"/>
+    </g>
+
+    <g fill="none" stroke="#9cdcf2" stroke-opacity=".62" stroke-width="2">
+      <path d="M271 225Q360 154 456 227"/>
+      <path d="M271 225Q342 333 437 348"/>
+      <path d="M456 227Q389 282 333 309"/>
+      <path d="M333 309Q402 331 437 348"/>
+    </g>
+  </g>
+
+  <g fill="none" stroke="url(#orbit)" stroke-linecap="round">
+    <ellipse cx="360" cy="280" rx="285" ry="122" stroke-width="3" transform="rotate(-19 360 280)"/>
+    <ellipse cx="360" cy="280" rx="264" ry="92" stroke-width="2.2" transform="rotate(27 360 280)" opacity=".82"/>
+    <path d="M139 403C209 170 471 88 597 178" stroke-width="2.4" opacity=".78"/>
+  </g>
+
+  <g font-family="Inter,Segoe UI,PingFang SC,sans-serif">
+    <g transform="translate(246 211)">
+      <circle r="8" fill="#2bbf83" stroke="#fff" stroke-width="3"/>
+      <rect x="-24" y="-43" width="48" height="25" rx="12.5" fill="#fff"/>
+      <text x="0" y="-26" text-anchor="middle" font-size="11" font-weight="800" fill="#26344a">US</text>
+    </g>
+    <g transform="translate(455 224)">
+      <circle r="8" fill="#7657ff" stroke="#fff" stroke-width="3"/>
+      <rect x="-24" y="-43" width="48" height="25" rx="12.5" fill="#fff"/>
+      <text x="0" y="-26" text-anchor="middle" font-size="11" font-weight="800" fill="#26344a">JP</text>
+    </g>
+    <g transform="translate(411 291)">
+      <circle r="8" fill="#f3b928" stroke="#fff" stroke-width="3"/>
+      <rect x="-24" y="15" width="48" height="25" rx="12.5" fill="#fff"/>
+      <text x="0" y="32" text-anchor="middle" font-size="11" font-weight="800" fill="#26344a">HK</text>
+    </g>
+    <g transform="translate(437 349)">
+      <circle r="8" fill="#ff5f7e" stroke="#fff" stroke-width="3"/>
+      <rect x="-24" y="15" width="48" height="25" rx="12.5" fill="#fff"/>
+      <text x="0" y="32" text-anchor="middle" font-size="11" font-weight="800" fill="#26344a">SG</text>
+    </g>
+    <g transform="translate(329 173)">
+      <circle r="7" fill="#12a8dd" stroke="#fff" stroke-width="3"/>
+      <rect x="-24" y="-40" width="48" height="24" rx="12" fill="#fff"/>
+      <text x="0" y="-24" text-anchor="middle" font-size="11" font-weight="800" fill="#26344a">EU</text>
+    </g>
+  </g>
+
+  <g transform="translate(92 76)">
+    <rect width="154" height="49" rx="24.5" fill="#fff" stroke="#e3e1ee"/>
+    <circle cx="25" cy="24.5" r="6" fill="#2bbf83"/>
+    <text x="42" y="29" font-family="Inter,Segoe UI,PingFang SC,sans-serif" font-size="14" font-weight="750" fill="#26344a">线路知识持续更新</text>
+  </g>
+</svg>
