@@ -276,16 +276,24 @@ function homePage(articles) {
     ['连接故障排查', '订阅失败、延迟高与网页打不开', '/questions/', '排障'],
     ['AI 工具目录', '对话、研究、办公与创作官方入口', '/ai-tools/', '工具']
   ].map((item) => '<a class="home-quick-card" href="' + item[2] + '"><span>' + item[3] + '</span><h3>' + item[0] + '</h3><p>' + item[1] + '</p><b>查看专题 →</b></a>').join('');
+  const heroKeywords = [
+    ['机场推荐', '/guides/'], ['机场排行', '/guides/'], ['机场测评', '/guides/'], ['IPLC 机场', '/articles/iplc-vs-transit/'],
+    ['专线机场', '/articles/iplc-vs-transit/'], ['低延迟机场', '/guides/'], ['Clash 机场', '/clients/'], ['Shadowrocket 机场', '/clients/'],
+    ['机场订阅', '/articles/subscription-import/'], ['节点倍率', '/articles/node-multiplier/'], ['原生 IP 机场', '/articles/native-residential-ip/'], ['ChatGPT 机场', '/guides/#scenarios'],
+    ['AI 机场', '/guides/#scenarios'], ['流媒体机场', '/guides/#scenarios'], ['香港机场', '/regions/'], ['日本机场', '/regions/'],
+    ['新加坡机场', '/regions/'], ['晚高峰不卡机场', '/articles/peak-hour-slow/'], ['机场优惠码', '/guides/#budget'], ['机场无法连接', '/questions/']
+  ].map((item) => '<a href="' + item[1] + '">' + item[0] + '</a>').join('');
   const keywordSections = [
-    ['选择与口碑', '/guides/', ['机场推荐', '机场排行', '机场测评', '机场怎么样', '稳定机场', '高速机场', '晚高峰不卡机场', '机场选择指南']],
-    ['线路与节点', '/articles/iplc-vs-transit/', ['IPLC 机场', '专线机场', '中转机场', 'BGP 机场', '原生 IP 机场', '住宅 IP 机场', '节点倍率', '日本游戏机场']],
-    ['客户端配置', '/clients/', ['Clash 机场', 'Shadowrocket 机场', 'v2rayN 机场', '机场订阅', '订阅链接', '多设备机场', 'Windows 机场', 'iOS 机场']],
-    ['场景与排障', '/questions/', ['ChatGPT 机场', '流媒体机场', 'YouTube 机场', '跨境电商机场', '机场无法连接', '更新订阅失败', '延迟高怎么办', '机场优惠码']]
+    ['选择与口碑', '/guides/', ['机场', '机场推荐', '机场排行', '机场测评', '机场怎么样', '机场导航', '机场大全', '好用机场', '稳定机场', '小白机场推荐']],
+    ['线路与价格', '/articles/iplc-vs-transit/', ['IPLC 机场', '专线机场', '中转机场', 'BGP 机场', '直连机场', '原生 IP 机场', '住宅 IP 机场', '节点倍率', '机场价格', '高性价比机场']],
+    ['客户端与订阅', '/clients/', ['Clash 机场', 'Shadowrocket 机场', 'v2rayN 机场', 'sing-box 机场', 'Windows 机场', 'Mac 机场', 'Android 机场', 'iOS 机场', '机场订阅', '订阅链接']],
+    ['使用场景', '/guides/#scenarios', ['ChatGPT 机场', 'AI 机场', 'OpenAI 机场', '流媒体机场', 'TikTok 机场', 'YouTube 机场', '游戏机场', '办公机场', '跨境电商机场', '学术机场']],
+    ['地区与排障', '/questions/', ['香港机场', '日本机场', '新加坡机场', '美国机场', '香港低延迟机场', '日本游戏机场', '机场无法连接', '更新订阅失败', '延迟高怎么办', 'Clash 导入订阅失败']]
   ].map((section) => '<article class="home-keyword-group"><h3><a href="' + section[1] + '">' + section[0] + ' <span>→</span></a></h3><div class="keyword-cloud">' + section[2].map((keyword) => '<a href="' + section[1] + '">' + keyword + '</a>').join('') + '</div></article>').join('');
   const content = [
     '<section class="classic-home-hero"><div class="container classic-home-grid">',
     '<figure class="network-globe"><img src="/assets/network-globe.svg" width="720" height="560" alt="全球线路与节点连接示意图"><figcaption>全球线路示意 · 非实时测速数据</figcaption></figure>',
-    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>把机场选择、配置与排障，整理成一套可长期查阅的指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。这里不复制其他网站的品牌榜单，只提供可核验的选择方法和你自己的品牌入口。</p><div class="hero-actions"><a class="btn btn-primary" href="/guides/">查看机场选择指南</a><a class="btn btn-ghost" href="/articles/">阅读最新文章</a></div><div class="classic-home-facts"><span><b>148</b> 个关键词专题</span><span><b>56</b> 个 AI 工具入口</span><span><b>7</b> 篇首发长文</span></div></div>',
+    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>机场选择、配置与排障的长期更新指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。这里不复制其他网站的品牌榜单，只提供可核验的选择方法和你自己的品牌入口。</p><div class="hero-actions"><a class="btn btn-primary" href="/guides/">查看机场选择指南</a><a class="btn btn-ghost" href="/articles/">阅读最新文章</a></div><div class="classic-home-keywords"><span>热门关键词</span>' + heroKeywords + '<a class="more" href="/topics/">全部 148 个词 →</a></div></div>',
     '</div></section>',
     '<section class="home-quick-section"><div class="container"><div class="section-head"><div><p class="eyebrow">快速开始</p><h2 class="section-title">按你现在的问题进入</h2></div><a class="text-link" href="/topics/">浏览完整专题目录 →</a></div><div class="home-quick-grid">' + quickLinks + '</div></div></section>',
     '<section class="section home-latest"><div class="container"><div class="section-head"><div><p class="eyebrow">最近更新</p><h2 class="section-title">围绕真实问题持续补充</h2><p class="section-lead">从新手选择到订阅导入，从线路差异到晚高峰排查，每篇文章都保留清晰入口。</p></div><a class="text-link" href="/articles/">全部文章 →</a></div><div class="article-grid">' + latestCards + '</div></div></section>',
