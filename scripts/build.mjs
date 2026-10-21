@@ -7,6 +7,28 @@ import { navItems, keywordGroups, aiGroups, clientMatrix, regionCards } from '..
 const root = process.cwd();
 const outDir = path.join(root, 'dist');
 const contentDir = path.join(root, 'content', 'articles');
+const airportPicks = [
+  {
+    name: '光年梯',
+    slug: 'guangnianti-review',
+    url: 'https://gnt001.gntvipaff.cc/#/?code=FRrxGbbY',
+    badge: '推荐 01',
+    summary: '适合希望先从简洁入口了解套餐，再自行测试 Clash 订阅、晚高峰和常用场景的用户。',
+    suitable: 'Clash 新手、日常网页、AI 与流媒体候选',
+    verify: '套餐流量、节点地区、倍率、设备数与退款规则',
+    tags: ['光年梯', 'Clash 梯子推荐', '机场测评']
+  },
+  {
+    name: '极连云',
+    slug: 'jilianyun-review',
+    url: 'https://haozevpn.jlyvipaff.com/#/?code=KUKfOY13',
+    badge: '推荐 02',
+    summary: '适合重视多平台使用体验，并愿意在购买前核对客户端兼容、常用地区和高峰期表现的用户。',
+    suitable: 'Windows、Mac、Android 与 iOS 多端候选',
+    verify: '订阅格式、同时在线限制、线路说明与售后渠道',
+    tags: ['极连云', '机场推荐', 'Clash 机场']
+  }
+];
 
 function escapeHtml(value = '') {
   return String(value)
@@ -24,7 +46,10 @@ function stripHtml(value = '') {
 function inline(value = '') {
   let result = escapeHtml(value);
   result = result.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  result = result.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
+  result = result.replace(/\[(.+?)\]\((.+?)\)/g, (_, label, href) => {
+    const external = /^https?:\/\//i.test(href);
+    return '<a href="' + href + '"' + (external ? ' target="_blank" rel="sponsored noopener noreferrer"' : '') + '>' + label + '</a>';
+  });
   return result;
 }
 
@@ -182,10 +207,10 @@ function footer() {
     '<div class="container">',
     '<div class="footer-grid">',
     '<div><h3>' + escapeHtml(config.siteName) + '</h3><p>机场选择、线路原理、客户端配置与网络排障知识库。内容用于技术研究与合规网络访问，请遵守所在地法律法规及服务条款。</p></div>',
-    '<div><h3>内容入口</h3><div class="footer-links"><a href="/brands/">品牌库</a><a href="/articles/">博客文章</a><a href="/topics/">专题目录</a><a href="/compare/">横向对比</a></div></div>',
+    '<div><h3>内容入口</h3><div class="footer-links"><a href="/brands/">机场推荐</a><a href="/articles/">博客文章</a><a href="/topics/">专题目录</a><a href="/compare/">横向对比</a></div></div>',
     '<div><h3>站点服务</h3><div class="footer-links"><a href="/questions/">问题库</a><a href="/ai-tools/">AI 工具</a><a href="/risk/">跑路预警</a><a href="/about/">关于本站</a></div></div>',
     '</div>',
-    '<div class="footer-bottom"><span>© 2026 ' + escapeHtml(config.siteName) + '</span><span>独立编辑 · 不复制第三方品牌推荐</span></div>',
+    '<div class="footer-bottom"><span>© 2026 ' + escapeHtml(config.siteName) + '</span><span>推广链接含邀请码 · 购买前请核验实时信息</span></div>',
     '</div>',
     '</footer>'
   ].join('');
@@ -255,6 +280,21 @@ function articleCard(article, index = 0) {
   ].join('');
 }
 
+function airportRecommendationCard(item, index) {
+  const tags = item.tags.map((tag) => '<span class="tag">' + escapeHtml(tag) + '</span>').join('');
+  return [
+    '<article class="airport-card">',
+    '<div class="airport-card-top"><span class="airport-rank">0' + (index + 1) + '</span><span class="profile-status' + (index ? ' status-blue' : '') + '">' + escapeHtml(item.badge) + '</span></div>',
+    '<h2>' + escapeHtml(item.name) + '</h2>',
+    '<p class="airport-summary">' + escapeHtml(item.summary) + '</p>',
+    '<dl class="airport-facts"><div><dt>适合人群</dt><dd>' + escapeHtml(item.suitable) + '</dd></div><div><dt>购买前核对</dt><dd>' + escapeHtml(item.verify) + '</dd></div></dl>',
+    '<div class="tag-row">' + tags + '</div>',
+    '<div class="airport-card-actions"><a class="btn btn-primary" href="' + item.url + '" target="_blank" rel="sponsored noopener noreferrer">访问官网 ↗</a><a class="btn btn-ghost" href="/articles/' + item.slug + '/">阅读测评</a></div>',
+    '<p class="airport-link-note">外部链接含邀请码；打开后可能先进入线路检测页。</p>',
+    '</article>'
+  ].join('');
+}
+
 function brandBand() {
   return [
     '<div class="brand-band">',
@@ -269,7 +309,7 @@ function brandBand() {
 function homePage(articles) {
   const latestCards = articles.slice(0, 6).map(articleCard).join('');
   const quickLinks = [
-    ['机场推荐与测评', '机场怎么选、机场排行与核验方法', '/guides/', '推荐'],
+    ['机场推荐与测评', '光年梯、极连云测评与官网入口', '/brands/', '推荐'],
     ['IPLC 与专线', '直连、中转、BGP 和专线怎么比较', '/articles/iplc-vs-transit/', '线路'],
     ['订阅与客户端', 'Clash、小火箭与各平台导入指南', '/clients/', '配置'],
     ['地区节点选择', '香港、日本、新加坡与美国节点用途', '/regions/', '地区'],
@@ -277,7 +317,7 @@ function homePage(articles) {
     ['AI 工具目录', '对话、研究、办公与创作官方入口', '/ai-tools/', '工具']
   ].map((item) => '<a class="home-quick-card" href="' + item[2] + '"><span>' + item[3] + '</span><h3>' + item[0] + '</h3><p>' + item[1] + '</p><b>查看专题 →</b></a>').join('');
   const heroKeywords = [
-    ['机场推荐', '/guides/'], ['机场排行', '/guides/'], ['机场测评', '/guides/'], ['IPLC 机场', '/articles/iplc-vs-transit/'],
+    ['机场推荐', '/brands/'], ['机场排行', '/brands/'], ['机场测评', '/brands/'], ['IPLC 机场', '/articles/iplc-vs-transit/'],
     ['专线机场', '/articles/iplc-vs-transit/'], ['低延迟机场', '/guides/'], ['Clash 机场', '/clients/'], ['Shadowrocket 机场', '/clients/'],
     ['机场订阅', '/articles/subscription-import/'], ['节点倍率', '/articles/node-multiplier/'], ['原生 IP 机场', '/articles/native-residential-ip/'], ['ChatGPT 机场', '/guides/#scenarios'],
     ['AI 机场', '/guides/#scenarios'], ['流媒体机场', '/guides/#scenarios'], ['香港机场', '/regions/'], ['日本机场', '/regions/'],
@@ -293,7 +333,7 @@ function homePage(articles) {
   const content = [
     '<section class="classic-home-hero"><div class="container classic-home-grid">',
     '<figure class="network-globe"><img src="/assets/network-globe.svg" width="720" height="560" alt="全球线路与节点连接示意图"><figcaption>全球线路示意 · 非实时测速数据</figcaption></figure>',
-    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>机场选择、配置与排障的长期更新指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。这里不复制其他网站的品牌榜单，只提供可核验的选择方法和你自己的品牌入口。</p><div class="hero-actions"><a class="btn btn-primary" href="/guides/">查看机场选择指南</a><a class="btn btn-ghost" href="/articles/">阅读最新文章</a></div><div class="classic-home-keywords"><span>热门关键词</span>' + heroKeywords + '<a class="more" href="/topics/">全部 148 个词 →</a></div></div>',
+    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>机场选择、配置与排障的长期更新指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。推荐页现已加入光年梯与极连云，并提供独立测评和购买前核验清单。</p><div class="hero-actions"><a class="btn btn-primary" href="/brands/">查看机场推荐</a><a class="btn btn-ghost" href="/articles/">阅读最新文章</a></div><div class="classic-home-keywords"><span>热门关键词</span>' + heroKeywords + '<a class="more" href="/topics/">全部 148 个词 →</a></div></div>',
     '</div></section>',
     '<section class="home-quick-section"><div class="container"><div class="section-head"><div><p class="eyebrow">快速开始</p><h2 class="section-title">按你现在的问题进入</h2></div><a class="text-link" href="/topics/">浏览完整专题目录 →</a></div><div class="home-quick-grid">' + quickLinks + '</div></div></section>',
     '<section class="section home-latest"><div class="container"><div class="section-head"><div><p class="eyebrow">最近更新</p><h2 class="section-title">围绕真实问题持续补充</h2><p class="section-lead">从新手选择到订阅导入，从线路差异到晚高峰排查，每篇文章都保留清晰入口。</p></div><a class="text-link" href="/articles/">全部文章 →</a></div><div class="article-grid">' + latestCards + '</div></div></section>',
@@ -367,13 +407,14 @@ function aiToolsPage() {
 }
 
 function brandPage() {
-  const content = standardHero(config.brand.eyebrow, config.brand.name + ' 品牌专区', '这里预留给你自己的品牌，不包含参考站或任何第三方机场的推荐信息。') + '<section class="section"><div class="container"><div class="brand-band"><p class="eyebrow">CONFIGURATION READY</p><h2>品牌信息只需改一个配置文件</h2><p>编辑 site.config.mjs 中的 brand.name、brand.url、brand.title 和 brand.description，即可统一替换全站推广入口。正式发布前，请补充真实可验证的套餐、线路、退款和支持信息。</p><a class="btn" href="/guides/">查看内容结构</a></div></div></section>';
-  return layout({ title: config.brand.name + ' 品牌专区', description: '自有品牌推广专区配置页面。', path: '/brand/', content, noindex: true });
+  const content = standardHero('AIRPORT PICKS', '机场推荐入口已经迁移', '光年梯与极连云的官网入口、购买前检查项和独立测评现已集中到机场推荐页。') + '<section class="section"><div class="container"><div class="brand-band"><p class="eyebrow">NEW RECOMMENDATION PAGE</p><h2>进入 Clash 梯子推荐专题</h2><p>先阅读测评和风险提示，再根据自己的设备、地区与使用时段进行短周期测试。</p><a class="btn" href="/brands/">查看机场推荐</a></div></div></section>';
+  return layout({ title: '机场推荐入口', description: '光年梯与极连云机场推荐入口。', path: '/brand/', content, noindex: true });
 }
 
 function brandsPage() {
-  const content = standardHero('BRAND ARCHIVE', '品牌库：只展示你愿意公开核验的信息', '不复制其他网站的机场名单。这里为自有品牌建立透明档案，并为后续更新预留固定结构。') + '<section class="section"><div class="container"><div class="topic-grid"><article class="topic-card brand-profile"><span class="profile-status">自有品牌 · 待配置</span><h3>' + escapeHtml(config.brand.name) + '</h3><p>可填写套餐、线路、节点地区、倍率、设备数、退款政策、客服渠道和最近更新日期。</p><div class="tag-row"><span class="tag">价格透明</span><span class="tag">线路说明</span><span class="tag">售后政策</span></div><p><a class="text-link" href="/brand/">编辑品牌专区 →</a></p></article><article class="topic-card"><span class="profile-status status-blue">收录原则</span><h3>先核验，再发布</h3><p>品牌资料必须有来源、更新时间和适用边界，不使用“永不掉线”“永久解锁”等无法验证的承诺。</p><p><a class="text-link" href="/risk/">查看风险核验 →</a></p></article><article class="topic-card"><span class="profile-status status-yellow">更新模板</span><h3>统一的品牌档案字段</h3><p>每次价格或线路变化只需更新一处，品牌库、对比页和文章引用可以保持一致。</p><p><a class="text-link" href="/compare/">查看对比维度 →</a></p></article></div></div></section>';
-  return layout({ title: '机场品牌库', description: '自有机场品牌资料、套餐线路与风险核验档案。', path: '/brands/', content });
+  const cards = airportPicks.map(airportRecommendationCard).join('');
+  const content = standardHero('CLASH AIRPORT PICKS', 'Clash 梯子推荐：光年梯与极连云', '两项机场推荐均提供官网入口与独立测评。本站不承诺永久稳定或永久解锁，请先核对套餐、设备限制和退款规则，并优先短周期测试。') + '<section class="section-sm"><div class="container"><div class="affiliate-disclosure"><strong>推广说明</strong><span>本页外部链接包含邀请码，站点可能因此获得推广收益，但不会提高你的购买价格。服务信息可能变化，请以官网实时页面为准。</span></div><div class="airport-recommend-grid">' + cards + '</div><div class="recommend-method"><p class="eyebrow">HOW WE REVIEW</p><h2>推荐前先检查这三件事</h2><div class="topic-grid"><article class="topic-card"><span class="profile-status">01</span><h3>先买短周期</h3><p>先确认订阅能导入自己的客户端，再测试常用时间段，避免只因年付折扣做决定。</p></article><article class="topic-card"><span class="profile-status status-blue">02</span><h3>测试真实场景</h3><p>网页、视频、AI、办公和游戏的要求不同，不用单次测速替代连续使用体验。</p></article><article class="topic-card"><span class="profile-status status-yellow">03</span><h3>核对限制</h3><p>重点确认流量、倍率、设备数、重置日期、工单渠道和退款条件。</p></article></div></div></div></section>';
+  return layout({ title: 'Clash 梯子推荐', description: '光年梯与极连云机场推荐、官网入口与独立测评。', path: '/brands/', content, schema: { '@context': 'https://schema.org', '@type': 'ItemList', name: 'Clash 梯子推荐', numberOfItems: airportPicks.length, itemListElement: airportPicks.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, url: config.baseUrl + '/articles/' + item.slug + '/' })) } });
 }
 
 function comparePage() {
@@ -398,7 +439,7 @@ function questionsPage() {
 }
 
 function aboutPage() {
-  const content = standardHero('ABOUT THIS SITE', '关于本站：让每个结论都有更新时间和判断标准', '这是一个可持续维护的机场知识门户，内容围绕选择、线路、客户端、故障和场景展开。') + '<section class="section"><div class="container"><div class="topic-grid"><article class="topic-card"><span class="profile-status">01</span><h3>不复制品牌榜单</h3><p>不把参考站的推荐品牌搬进来，推广入口只留给你自己的品牌。</p></article><article class="topic-card"><span class="profile-status status-blue">02</span><h3>关键词对应内容</h3><p>全部关键词按搜索意图分组，指向文章、专题、客户端或问题库。</p></article><article class="topic-card"><span class="profile-status status-yellow">03</span><h3>持续更新而非一次性页面</h3><p>文章使用独立内容文件，新增或修改后会自动更新列表、RSS 和站点地图。</p></article></div></div></section>';
+  const content = standardHero('ABOUT THIS SITE', '关于本站：让每个结论都有更新时间和判断标准', '这是一个可持续维护的机场知识门户，内容围绕选择、线路、客户端、故障和场景展开。') + '<section class="section"><div class="container"><div class="topic-grid"><article class="topic-card"><span class="profile-status">01</span><h3>明确披露推广链接</h3><p>机场推荐页会标注邀请码与推广关系，服务价格、线路和套餐变化以官网实时信息为准。</p></article><article class="topic-card"><span class="profile-status status-blue">02</span><h3>关键词对应内容</h3><p>全部关键词按搜索意图分组，指向文章、专题、客户端或问题库。</p></article><article class="topic-card"><span class="profile-status status-yellow">03</span><h3>持续更新而非一次性页面</h3><p>文章使用独立内容文件，新增或修改后会自动更新列表、RSS 和站点地图。</p></article></div></div></section>';
   return layout({ title: '关于本站', description: '机场观察局的内容原则、更新方式和品牌政策。', path: '/about/', content });
 }
 

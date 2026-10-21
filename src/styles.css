@@ -148,13 +148,33 @@ img { max-width: 100%; }
 .keyword-cloud a:hover { color: white; background: var(--purple); }
 
 .brand-band { position: relative; overflow: hidden; padding: 3rem; color: white; border-radius: 28px; background: linear-gradient(120deg, #563ae2, #814fff 58%, #b84cbf); box-shadow: 0 22px 60px rgba(99,66,216,.24); }
-.brand-band::after { content: "YOUR BRAND"; position: absolute; right: -1rem; bottom: -2.2rem; color: rgba(255,255,255,.10); font-size: clamp(4rem, 11vw, 9rem); font-weight: 950; line-height: 1; letter-spacing: -.08em; white-space: nowrap; }
+.brand-band::after { content: "AIRPORT PICKS"; position: absolute; right: -1rem; bottom: -2.2rem; color: rgba(255,255,255,.10); font-size: clamp(4rem, 11vw, 9rem); font-weight: 950; line-height: 1; letter-spacing: -.08em; white-space: nowrap; }
 .brand-band > * { position: relative; z-index: 1; }
 .brand-band .eyebrow { color: #eadfff; }
 .brand-band .eyebrow::before { background: white; }
 .brand-band h2 { max-width: 760px; margin: 0; font-size: clamp(1.9rem, 3.8vw, 3.35rem); line-height: 1.08; letter-spacing: -.045em; }
 .brand-band p { max-width: 700px; color: rgba(255,255,255,.76); }
 .brand-band .btn { color: #5b3bd7; border: 0; background: white; }
+
+.affiliate-disclosure { display: flex; gap: .75rem; margin-bottom: 1.25rem; padding: 1rem 1.1rem; color: var(--muted); border: 1px solid color-mix(in srgb, var(--yellow) 34%, var(--line)); border-radius: 16px; background: var(--yellow-soft); font-size: .84rem; }
+.affiliate-disclosure strong { flex: 0 0 auto; color: var(--ink); }
+.airport-recommend-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.airport-card { position: relative; display: flex; min-height: 520px; padding: 1.65rem; overflow: hidden; border: 1px solid var(--line); border-radius: 26px; background: var(--surface); box-shadow: var(--shadow-sm); flex-direction: column; }
+.airport-card::after { content: ""; position: absolute; width: 190px; height: 190px; right: -95px; top: -100px; border: 35px solid var(--purple-soft); border-radius: 50%; }
+.airport-card:nth-child(2)::after { border-color: var(--blue-soft); }
+.airport-card-top { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.airport-rank { color: color-mix(in srgb, var(--purple) 66%, var(--muted)); font: 900 .78rem ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; }
+.airport-card h2 { position: relative; z-index: 1; margin: 3rem 0 .8rem; font-size: clamp(1.85rem, 3vw, 2.65rem); letter-spacing: -.04em; }
+.airport-summary { max-width: 640px; margin: 0 0 1.2rem; color: var(--muted); }
+.airport-facts { display: grid; gap: .7rem; margin: 0 0 1.15rem; }
+.airport-facts div { padding: .8rem .9rem; border-radius: 14px; background: var(--surface-2); }
+.airport-facts dt { margin-bottom: .25rem; color: var(--muted); font-size: .7rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.airport-facts dd { margin: 0; font-size: .87rem; }
+.airport-card-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: auto; padding-top: 1.4rem; }
+.airport-card-actions .btn { min-width: 130px; justify-content: center; }
+.airport-link-note { margin: .85rem 0 0; color: var(--muted); font-size: .7rem; }
+.recommend-method { padding-top: 4.5rem; }
+.recommend-method h2 { margin: 0 0 1.2rem; font-size: clamp(1.8rem, 3vw, 2.7rem); }
 
 .page-hero { position: relative; overflow: hidden; padding: 6rem 0 4.2rem; border-bottom: 1px solid var(--line); background: linear-gradient(145deg, color-mix(in srgb, var(--purple-soft) 70%, var(--surface)), var(--surface)); }
 .page-hero::after { content: ""; position: absolute; width: 300px; height: 300px; right: 6%; top: -170px; border: 50px solid rgba(118,87,255,.08); border-radius: 50%; }
@@ -305,6 +325,10 @@ img { max-width: 100%; }
   .atlas-tile { min-height: 115px; padding: .85rem; }
   .atlas-stats { grid-template-columns: 1fr; }
   .route-grid, .article-grid, .topic-grid, .tool-grid, .region-grid, .footer-grid { grid-template-columns: 1fr; }
+  .airport-recommend-grid { grid-template-columns: 1fr; }
+  .airport-card { min-height: auto; padding: 1.3rem; }
+  .airport-card h2 { margin-top: 2rem; }
+  .affiliate-disclosure { align-items: flex-start; flex-direction: column; }
   .article-card.featured { grid-column: auto; }
   .section-head { align-items: start; flex-direction: column; }
   .brand-band { padding: 2rem 1.25rem; }
