@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://clash-jichang.cc/sitemap.xml
