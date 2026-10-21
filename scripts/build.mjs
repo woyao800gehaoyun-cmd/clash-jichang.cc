@@ -170,7 +170,7 @@ function header(currentPath) {
     '<span>' + escapeHtml(config.siteName) + '<small>' + escapeHtml(config.shortName) + '</small></span>',
     '</a>',
     '<button class="menu-toggle" type="button" data-menu aria-expanded="false" aria-label="打开导航">菜单</button>',
-    '<nav class="site-nav" data-nav aria-label="主导航"><div class="nav-main">' + nav + '</div><div class="nav-actions"><a class="nav-chip chip-blue" href="/shared-id/">共享 ID ●</a><a class="nav-chip chip-red" href="/risk/">跑路预警 ●</a><button class="nav-chip theme-toggle" type="button" data-theme-toggle aria-pressed="false">🌞 浅色</button><a class="nav-chip chip-purple" href="' + config.brand.telegram + '">📣 TG 频道</a></div></nav>',
+    '<nav class="site-nav" data-nav aria-label="主导航"><div class="nav-main">' + nav + '</div><div class="nav-actions"><a class="nav-chip chip-blue" href="/shared-id/">共享 ID ●</a><a class="nav-chip chip-red" href="/risk/">跑路预警 ●</a><button class="nav-chip theme-toggle" type="button" data-theme-toggle aria-pressed="false">🌞 浅色</button></div></nav>',
     '</div>',
     '</header>'
   ].join('');
@@ -232,7 +232,7 @@ function layout(options) {
     '<script>try{document.documentElement.dataset.theme=localStorage.getItem("site-theme")||"light"}catch(e){document.documentElement.dataset.theme="light"}</script>',
     '<link rel="stylesheet" href="/assets/styles.css">',
     options.schema ? jsonLd(options.schema) : '',
-    '</head><body>',
+    '</head><body' + (options.bodyClass ? ' class="' + escapeHtml(options.bodyClass) + '"' : '') + '>',
     header(options.path),
     '<main id="main">' + options.content + '</main>',
     footer(),
@@ -267,31 +267,26 @@ function brandBand() {
 }
 
 function homePage(articles) {
-  const cards = articles.slice(0, 6).map(articleCard).join('');
-  const topics = keywordGroups.slice(0, 6).map((group) => {
-    const keywords = group.keywords.slice(0, 7).map((keyword) => '<span>' + escapeHtml(keyword) + '</span>').join('');
-    return '<article class="topic-card"><h3>' + escapeHtml(group.title) + '</h3><p>' + escapeHtml(group.description) + '</p><div class="keyword-cloud">' + keywords + '</div><p><a class="text-link" href="' + group.href + '">查看专题 →</a></p></article>';
-  }).join('');
+  const journalRows = articles.slice(0, 6).map((article, index) => '<a class="journal-row" href="/articles/' + article.slug + '/"><span class="journal-number">' + String(index + 1).padStart(2, '0') + '</span><span class="journal-copy"><small>' + escapeHtml(article.category) + ' / ' + escapeHtml(article.updated) + '</small><strong>' + escapeHtml(article.title) + '</strong></span><span class="journal-time">' + escapeHtml(article.readTime) + ' ↗</span></a>').join('');
+  const topicRows = keywordGroups.slice(0, 6).map((group, index) => '<a class="topic-line" href="' + group.href + '"><span>' + String(index + 1).padStart(2, '0') + '</span><strong>' + escapeHtml(group.title) + '</strong><em>' + group.keywords.length + ' 个词</em><p>' + escapeHtml(group.description) + '</p></a>').join('');
   const content = [
-    '<section class="hero"><div class="container hero-inner">',
-    '<div><p class="eyebrow">2026 机场知识门户</p><h1><span>选择、配置、排障，</span><span>一张<em>内容地图</em></span><span>全部讲清</span></h1><p class="hero-copy">从机场怎么选，到 Clash 导入失败；从线路倍率，到 AI 与流媒体场景。用清晰栏目代替重复榜单，让每个问题都有入口。</p><div class="hero-actions"><a class="btn btn-primary" href="/articles/">浏览博客文章</a><a class="btn btn-ghost" href="/questions/">进入问题库</a></div><div class="hero-note"><span>148 个关键词专题</span><span>56 个 AI 工具入口</span><span>7 篇首发长文</span></div></div>',
-    '<div class="atlas-board" aria-label="内容地图"><div class="atlas-top"><span>内容导航台</span><strong>持续更新中 ●</strong></div><div class="atlas-grid"><a class="atlas-tile tile-purple" href="/brands/"><b>品牌库</b><span>自有品牌档案</span></a><a class="atlas-tile tile-blue" href="/compare/"><b>横向对比</b><span>线路与套餐维度</span></a><a class="atlas-tile tile-yellow" href="/questions/"><b>问题库</b><span>连接与订阅排障</span></a><a class="atlas-tile tile-coral" href="/risk/"><b>风险预警</b><span>跑路信号与核验</span></a></div><div class="atlas-stats"><span><strong>148</strong> 搜索词</span><span><strong>22</strong> 内容页面</span><span><strong>9</strong> 专题分组</span></div></div>',
+    '<section class="dossier-hero"><div class="container dossier-layout">',
+    '<aside class="dossier-rail"><span>ISSUE</span><strong>01</strong><i></i><small>2026 / KNOWLEDGE ARCHIVE</small></aside>',
+    '<div class="dossier-copy"><p class="dossier-label">独立机场知识档案 · 持续修订</p><h1>不做复制榜单，<br><em>只做能查证的答案。</em></h1><p>选择、线路、倍率、客户端、AI、流媒体与故障排查，被整理成可以长期更新的档案，而不是又一个相似的推荐首页。</p><div class="dossier-actions"><a href="/articles/">翻阅最新文章</a><a href="/topics/">打开专题索引</a></div><div class="dossier-meta"><span>148 / 搜索词</span><span>22 / 内容页面</span><span>09 / 专题组</span></div></div>',
+    '<div class="dossier-panel"><div class="panel-stamp">START HERE</div><a href="/guides/"><b>01</b><span>第一次来<br><strong>机场怎么选</strong></span><i>→</i></a><a href="/questions/"><b>02</b><span>遇到问题<br><strong>按现象排查</strong></span><i>→</i></a><a href="/compare/"><b>03</b><span>购买之前<br><strong>横向对比</strong></span><i>→</i></a><a href="/ai-tools/"><b>04</b><span>工作效率<br><strong>AI 工具目录</strong></span><i>→</i></a></div>',
     '</div></section>',
-    '<section class="section"><div class="container"><div class="section-head"><div><p class="eyebrow">快速入口</p><h2 class="section-title">今天想解决什么问题？</h2></div><a class="text-link" href="/topics/">查看完整专题目录 →</a></div><div class="route-grid">',
-    '<a class="route-card" href="/guides/#needs"><span class="route-no">01 / NEED</span><h3>先定使用场景</h3><p>AI、流媒体、外贸、游戏和远程办公对线路的要求完全不同。</p></a>',
-    '<a class="route-card" href="/articles/iplc-vs-transit/"><span class="route-no">02 / ROUTE</span><h3>再看线路质量</h3><p>直连、中转、BGP 与 IPLC 的差异，不能只看宣传名词。</p></a>',
-    '<a class="route-card" href="/articles/node-multiplier/"><span class="route-no">03 / COST</span><h3>算清真实成本</h3><p>价格、流量、倍率、设备数和重置规则共同决定使用成本。</p></a>',
-    '<a class="route-card" href="/clients/"><span class="route-no">04 / CLIENT</span><h3>匹配你的设备</h3><p>Windows、Mac、Android 与 iOS 选择不同的客户端与订阅格式。</p></a>',
-    '</div></div></section>',
-    '<section class="section" style="background:rgba(255,255,255,.018)"><div class="container"><div class="section-head"><div><p class="eyebrow">EDITORIAL</p><h2 class="section-title">从问题出发的深度文章</h2></div><a class="text-link" href="/articles/">全部文章 →</a></div><div class="article-grid">' + cards + '</div></div></section>',
-    '<section class="section"><div class="container"><div class="section-head"><div><p class="eyebrow">TOPIC MAP</p><h2 class="section-title">关键词不是堆砌，而是内容地图</h2><p class="section-lead">用户给出的全部关键词已按搜索意图拆成九组专题，每个词都有明确落点。</p></div></div><div class="topic-grid">' + topics + '</div><p style="margin-top:1.5rem"><a class="btn btn-ghost" href="/topics/">查看全部关键词专题</a></p></div></section>',
-    '<section class="section-sm"><div class="container">' + brandBand() + '</div></section>'
+    '<div class="word-tape"><div><span>机场推荐</span><span>IPLC 专线</span><span>节点倍率</span><span>Clash 配置</span><span>原生 IP</span><span>晚高峰排障</span><span>AI 工具</span><span>流媒体解锁</span></div></div>',
+    '<section class="section home-index"><div class="container"><div class="home-section-head"><span>01 / FIELD INDEX</span><h2>从哪一页开始，<br>取决于你正在做什么。</h2><a href="/topics/">完整目录 ↗</a></div><div class="ledger-grid"><a href="/brands/"><span>A</span><strong>品牌档案</strong><p>集中维护自有品牌资料、线路和套餐信息。</p></a><a href="/questions/"><span>B</span><strong>故障问题库</strong><p>订阅、节点、连接、延迟与客户端逐层排查。</p></a><a href="/regions/"><span>C</span><strong>地区与线路</strong><p>香港、日本、新加坡、美国及专项线路选择。</p></a><a href="/risk/"><span>D</span><strong>风险观察</strong><p>记录跑路信号与核验方法，不制造传闻。</p></a></div></div></section>',
+    '<section class="section home-journal"><div class="container journal-layout"><div class="journal-title"><span>02 / LATEST NOTES</span><h2>本期<br>编辑手记</h2><p>文章按问题更新，不以凑数量为目标。</p><a href="/articles/">查看全部文章 →</a></div><div class="journal-list">' + journalRows + '</div></div></section>',
+    '<section class="section home-topic-ledger"><div class="container"><div class="home-section-head"><span>03 / TOPIC LEDGER</span><h2>关键词被放进目录，<br>而不是塞满首页。</h2><a href="/topics/">全部 148 个词 ↗</a></div><div class="topic-ledger">' + topicRows + '</div></div></section>',
+    '<section class="section-sm"><div class="container"><div class="home-brand-note"><span>OWN BRAND / NO THIRD-PARTY LIST</span><h2>品牌推广位只属于你的品牌。</h2><p>不放参考站的推荐，不放任何个人联系方式；品牌资料准备好后，再从统一配置中发布。</p><a href="/brand/">查看品牌档案结构 →</a></div></div></section>'
   ].join('');
   return layout({
     title: config.siteName,
     description: config.description,
     path: '/',
     content,
+    bodyClass: 'home-page',
     schema: { '@context': 'https://schema.org', '@type': 'WebSite', name: config.siteName, url: config.baseUrl, description: config.description }
   });
 }
@@ -353,7 +348,7 @@ function aiToolsPage() {
 }
 
 function brandPage() {
-  const content = standardHero(config.brand.eyebrow, config.brand.name + ' 品牌专区', '这里预留给你自己的品牌，不包含参考站或任何第三方机场的推荐信息。') + '<section class="section"><div class="container"><div class="brand-band" id="contact"><p class="eyebrow">CONFIGURATION READY</p><h2>品牌信息只需改一个配置文件</h2><p>编辑 site.config.mjs 中的 brand.name、brand.url、brand.title、brand.description 和 telegram，即可统一替换全站推广入口。正式发布前，请补充真实可验证的套餐、线路、退款和支持信息。</p><a class="btn" href="/guides/">查看内容结构</a></div></div></section>';
+  const content = standardHero(config.brand.eyebrow, config.brand.name + ' 品牌专区', '这里预留给你自己的品牌，不包含参考站或任何第三方机场的推荐信息。') + '<section class="section"><div class="container"><div class="brand-band"><p class="eyebrow">CONFIGURATION READY</p><h2>品牌信息只需改一个配置文件</h2><p>编辑 site.config.mjs 中的 brand.name、brand.url、brand.title 和 brand.description，即可统一替换全站推广入口。正式发布前，请补充真实可验证的套餐、线路、退款和支持信息。</p><a class="btn" href="/guides/">查看内容结构</a></div></div></section>';
   return layout({ title: config.brand.name + ' 品牌专区', description: '自有品牌推广专区配置页面。', path: '/brand/', content, noindex: true });
 }
 

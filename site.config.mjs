@@ -9,10 +9,6 @@ export default {
     url: '/brand/',
     eyebrow: 'SELF-OWNED BRAND',
     title: '把这里替换成你自己的品牌主张',
-    description: '推广位已经独立配置，不含任何第三方机场。修改 site.config.mjs 即可统一替换全站品牌名称与入口。',
-    telegram: '/brand/#contact'
-  },
-  social: {
-    github: 'https://github.com/woyao800gehaoyun-cmd/clash-jichang.cc'
+    description: '推广位已经独立配置，不含任何第三方机场。修改 site.config.mjs 即可统一替换全站品牌名称与入口。'
   }
 };
