@@ -192,11 +192,19 @@ function jsonLd(data) {
   return '<script type="application/ld+json">' + JSON.stringify(data).replaceAll('<', '\\u003c') + '</script>';
 }
 
+function relativizeRootUrls(html, currentPath) {
+  const depth = currentPath.split('/').filter(Boolean).length;
+  const prefix = depth ? '../'.repeat(depth) : './';
+  return html.replace(/\b(href|src)="\/([^\"]*)"/g, (match, attribute, target) => {
+    return attribute + '="' + prefix + target + '"';
+  });
+}
+
 function layout(options) {
   const title = options.title === config.siteName ? options.title : options.title + '｜' + config.siteName;
   const description = options.description || config.description;
   const canonical = config.baseUrl + options.path;
-  return [
+  const html = [
     '<!doctype html><html lang="zh-CN"><head>',
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -220,6 +228,7 @@ function layout(options) {
     '<script src="/assets/app.js" defer></script>',
     '</body></html>'
   ].join('');
+  return relativizeRootUrls(html, options.path);
 }
 
 function articleCard(article, index = 0) {
