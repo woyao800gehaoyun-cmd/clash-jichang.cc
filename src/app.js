@@ -1,5 +1,6 @@
 const menuButton = document.querySelector('[data-menu]');
 const nav = document.querySelector('[data-nav]');
+const themeButton = document.querySelector('[data-theme-toggle]');
 
 if (menuButton && nav) {
   menuButton.addEventListener('click', () => {
@@ -40,6 +41,22 @@ filterButtons.forEach((button) => {
 });
 
 searchInput?.addEventListener('input', filterTools);
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  if (themeButton) {
+    themeButton.textContent = theme === 'dark' ? '🌙 深色' : '🌞 浅色';
+    themeButton.setAttribute('aria-pressed', String(theme === 'dark'));
+  }
+  try { localStorage.setItem('site-theme', theme); } catch {}
+}
+
+if (themeButton) {
+  setTheme(document.documentElement.dataset.theme || 'light');
+  themeButton.addEventListener('click', () => {
+    setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+}
 
 const articleSearch = document.querySelector('[data-article-search]');
 const articleCards = [...document.querySelectorAll('[data-article-card]')];

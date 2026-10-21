@@ -1,10 +1,12 @@
 export const navItems = [
-  ['选择指南', '/guides/'],
-  ['客户端', '/clients/'],
-  ['故障排查', '/network/'],
-  ['地区线路', '/regions/'],
-  ['AI 工具', '/ai-tools/'],
-  ['专题索引', '/topics/']
+  ['首页', '/'],
+  ['品牌库', '/brands/'],
+  ['博客文章', '/articles/'],
+  ['专题目录', '/topics/'],
+  ['横向对比', '/compare/'],
+  ['问题库', '/questions/'],
+  ['🤖 AI 工具', '/ai-tools/'],
+  ['关于本站', '/about/']
 ];
 
 export const keywordGroups = [

@@ -120,6 +120,9 @@ function parseFrontmatter(source) {
     if (value.startsWith('[') && value.endsWith(']')) {
       value = value.slice(1, -1).split(',').map((item) => item.trim()).filter(Boolean);
     }
+    if (key === 'tags' && typeof value === 'string') {
+      value = value.split(',').map((item) => item.trim()).filter(Boolean);
+    }
     data[key] = value;
   });
   return { data, body: normalized.slice(end + 5) };
@@ -163,11 +166,11 @@ function header(currentPath) {
     '<header class="site-header">',
     '<div class="header-inner">',
     '<a class="brand" href="/" aria-label="' + escapeHtml(config.siteName) + '首页">',
-    '<span class="brand-mark">LL</span>',
+    '<span class="brand-mark">◎</span>',
     '<span>' + escapeHtml(config.siteName) + '<small>' + escapeHtml(config.shortName) + '</small></span>',
     '</a>',
     '<button class="menu-toggle" type="button" data-menu aria-expanded="false" aria-label="打开导航">菜单</button>',
-    '<nav class="site-nav" data-nav aria-label="主导航">' + nav + '<a class="header-cta" href="' + config.brand.url + '">' + escapeHtml(config.brand.name) + '</a></nav>',
+    '<nav class="site-nav" data-nav aria-label="主导航"><div class="nav-main">' + nav + '</div><div class="nav-actions"><a class="nav-chip chip-blue" href="/shared-id/">共享 ID ●</a><a class="nav-chip chip-red" href="/risk/">跑路预警 ●</a><button class="nav-chip theme-toggle" type="button" data-theme-toggle aria-pressed="false">🌞 浅色</button><a class="nav-chip chip-purple" href="' + config.brand.telegram + '">📣 TG 频道</a></div></nav>',
     '</div>',
     '</header>'
   ].join('');
@@ -179,8 +182,8 @@ function footer() {
     '<div class="container">',
     '<div class="footer-grid">',
     '<div><h3>' + escapeHtml(config.siteName) + '</h3><p>机场选择、线路原理、客户端配置与网络排障知识库。内容用于技术研究与合规网络访问，请遵守所在地法律法规及服务条款。</p></div>',
-    '<div><h3>内容入口</h3><div class="footer-links"><a href="/guides/">选择指南</a><a href="/clients/">客户端</a><a href="/network/">故障排查</a><a href="/topics/">专题索引</a></div></div>',
-    '<div><h3>站点</h3><div class="footer-links"><a href="/ai-tools/">AI 工具</a><a href="/brand/">品牌专区</a><a href="/articles/">全部文章</a><a href="' + config.social.github + '" target="_blank" rel="noopener">GitHub 仓库</a></div></div>',
+    '<div><h3>内容入口</h3><div class="footer-links"><a href="/brands/">品牌库</a><a href="/articles/">博客文章</a><a href="/topics/">专题目录</a><a href="/compare/">横向对比</a></div></div>',
+    '<div><h3>站点服务</h3><div class="footer-links"><a href="/questions/">问题库</a><a href="/ai-tools/">AI 工具</a><a href="/risk/">跑路预警</a><a href="/about/">关于本站</a></div></div>',
     '</div>',
     '<div class="footer-bottom"><span>© 2026 ' + escapeHtml(config.siteName) + '</span><span>独立编辑 · 不复制第三方品牌推荐</span></div>',
     '</div>',
@@ -196,7 +199,14 @@ function relativizeRootUrls(html, currentPath) {
   const depth = currentPath.split('/').filter(Boolean).length;
   const prefix = depth ? '../'.repeat(depth) : './';
   return html.replace(/\b(href|src)="\/([^\"]*)"/g, (match, attribute, target) => {
-    return attribute + '="' + prefix + target + '"';
+    const hashAt = target.indexOf('#');
+    const queryAt = target.indexOf('?');
+    const cutAt = [hashAt, queryAt].filter((index) => index >= 0).sort((a, b) => a - b)[0] ?? target.length;
+    let pathname = target.slice(0, cutAt);
+    const suffix = target.slice(cutAt);
+    if (!pathname) pathname = 'index.html';
+    else if (pathname.endsWith('/')) pathname += 'index.html';
+    return attribute + '="' + prefix + pathname + suffix + '"';
   });
 }
 
@@ -218,7 +228,8 @@ function layout(options) {
     '<meta property="og:description" content="' + escapeHtml(description) + '">',
     '<meta property="og:url" content="' + canonical + '">',
     '<meta property="og:site_name" content="' + escapeHtml(config.siteName) + '">',
-    '<meta name="theme-color" content="#07110f">',
+    '<meta name="theme-color" content="#7657ff">',
+    '<script>try{document.documentElement.dataset.theme=localStorage.getItem("site-theme")||"light"}catch(e){document.documentElement.dataset.theme="light"}</script>',
     '<link rel="stylesheet" href="/assets/styles.css">',
     options.schema ? jsonLd(options.schema) : '',
     '</head><body>',
@@ -263,10 +274,10 @@ function homePage(articles) {
   }).join('');
   const content = [
     '<section class="hero"><div class="container hero-inner">',
-    '<div><p class="eyebrow">NETWORK FIELD NOTES / 2026</p><h1><span>把线路问题，</span><span>拆成<em>可以验证</em></span><span>的答案</span></h1><p class="hero-copy">不堆砌品牌，不复制榜单。这里从线路、倍率、IP、客户端和真实场景出发，建立一套能长期更新的机场选择与排障知识库。</p><div class="hero-actions"><a class="btn btn-primary" href="/guides/">开始选择</a><a class="btn btn-ghost" href="/network/">解决连接问题</a></div><div class="hero-note"><span>第三方品牌零植入</span><span>关键词专题化</span><span>文章持续更新</span></div></div>',
-    '<div class="signal-board" aria-label="线路示意图"><div class="signal-top"><span>ROUTE MONITOR</span><span class="signal-live">KNOWLEDGE ONLINE</span></div><div class="signal-map"><i class="orbit"></i><i class="orbit"></i><i class="orbit"></i><i class="line line-1"></i><i class="line line-2"></i><i class="line line-3"></i><i class="line line-4"></i><span class="node node-core" data-ms="本地">YOU</span><span class="node node-hk" data-ms="低延迟">HK</span><span class="node node-jp" data-ms="游戏 / AI">JP</span><span class="node node-sg" data-ms="跨境办公">SG</span><span class="node node-us" data-ms="流媒体">US</span></div></div>',
+    '<div><p class="eyebrow">2026 机场知识门户</p><h1><span>选择、配置、排障，</span><span>一张<em>内容地图</em></span><span>全部讲清</span></h1><p class="hero-copy">从机场怎么选，到 Clash 导入失败；从线路倍率，到 AI 与流媒体场景。用清晰栏目代替重复榜单，让每个问题都有入口。</p><div class="hero-actions"><a class="btn btn-primary" href="/articles/">浏览博客文章</a><a class="btn btn-ghost" href="/questions/">进入问题库</a></div><div class="hero-note"><span>148 个关键词专题</span><span>56 个 AI 工具入口</span><span>7 篇首发长文</span></div></div>',
+    '<div class="atlas-board" aria-label="内容地图"><div class="atlas-top"><span>内容导航台</span><strong>持续更新中 ●</strong></div><div class="atlas-grid"><a class="atlas-tile tile-purple" href="/brands/"><b>品牌库</b><span>自有品牌档案</span></a><a class="atlas-tile tile-blue" href="/compare/"><b>横向对比</b><span>线路与套餐维度</span></a><a class="atlas-tile tile-yellow" href="/questions/"><b>问题库</b><span>连接与订阅排障</span></a><a class="atlas-tile tile-coral" href="/risk/"><b>风险预警</b><span>跑路信号与核验</span></a></div><div class="atlas-stats"><span><strong>148</strong> 搜索词</span><span><strong>22</strong> 内容页面</span><span><strong>9</strong> 专题分组</span></div></div>',
     '</div></section>',
-    '<section class="section"><div class="container"><div class="section-head"><div><p class="eyebrow">DECISION PATH</p><h2 class="section-title">四步找到适合自己的方案</h2></div><a class="text-link" href="/guides/">查看完整选择指南 →</a></div><div class="route-grid">',
+    '<section class="section"><div class="container"><div class="section-head"><div><p class="eyebrow">快速入口</p><h2 class="section-title">今天想解决什么问题？</h2></div><a class="text-link" href="/topics/">查看完整专题目录 →</a></div><div class="route-grid">',
     '<a class="route-card" href="/guides/#needs"><span class="route-no">01 / NEED</span><h3>先定使用场景</h3><p>AI、流媒体、外贸、游戏和远程办公对线路的要求完全不同。</p></a>',
     '<a class="route-card" href="/articles/iplc-vs-transit/"><span class="route-no">02 / ROUTE</span><h3>再看线路质量</h3><p>直连、中转、BGP 与 IPLC 的差异，不能只看宣传名词。</p></a>',
     '<a class="route-card" href="/articles/node-multiplier/"><span class="route-no">03 / COST</span><h3>算清真实成本</h3><p>价格、流量、倍率、设备数和重置规则共同决定使用成本。</p></a>',
@@ -342,8 +353,51 @@ function aiToolsPage() {
 }
 
 function brandPage() {
-  const content = standardHero(config.brand.eyebrow, config.brand.name + ' 品牌专区', '这里预留给你自己的品牌，不包含参考站或任何第三方机场的推荐信息。') + '<section class="section"><div class="container"><div class="brand-band"><p class="eyebrow">CONFIGURATION READY</p><h2>品牌信息只需改一个配置文件</h2><p>编辑 site.config.mjs 中的 brand.name、brand.url、brand.title 和 brand.description，即可统一替换首页、导航栏、页脚及所有推广入口。正式发布前，请补充真实可验证的套餐、线路、退款和支持信息。</p><a class="btn" href="/guides/">查看内容结构</a></div></div></section>';
+  const content = standardHero(config.brand.eyebrow, config.brand.name + ' 品牌专区', '这里预留给你自己的品牌，不包含参考站或任何第三方机场的推荐信息。') + '<section class="section"><div class="container"><div class="brand-band" id="contact"><p class="eyebrow">CONFIGURATION READY</p><h2>品牌信息只需改一个配置文件</h2><p>编辑 site.config.mjs 中的 brand.name、brand.url、brand.title、brand.description 和 telegram，即可统一替换全站推广入口。正式发布前，请补充真实可验证的套餐、线路、退款和支持信息。</p><a class="btn" href="/guides/">查看内容结构</a></div></div></section>';
   return layout({ title: config.brand.name + ' 品牌专区', description: '自有品牌推广专区配置页面。', path: '/brand/', content, noindex: true });
+}
+
+function brandsPage() {
+  const content = standardHero('BRAND ARCHIVE', '品牌库：只展示你愿意公开核验的信息', '不复制其他网站的机场名单。这里为自有品牌建立透明档案，并为后续更新预留固定结构。') + '<section class="section"><div class="container"><div class="topic-grid"><article class="topic-card brand-profile"><span class="profile-status">自有品牌 · 待配置</span><h3>' + escapeHtml(config.brand.name) + '</h3><p>可填写套餐、线路、节点地区、倍率、设备数、退款政策、客服渠道和最近更新日期。</p><div class="tag-row"><span class="tag">价格透明</span><span class="tag">线路说明</span><span class="tag">售后政策</span></div><p><a class="text-link" href="/brand/">编辑品牌专区 →</a></p></article><article class="topic-card"><span class="profile-status status-blue">收录原则</span><h3>先核验，再发布</h3><p>品牌资料必须有来源、更新时间和适用边界，不使用“永不掉线”“永久解锁”等无法验证的承诺。</p><p><a class="text-link" href="/risk/">查看风险核验 →</a></p></article><article class="topic-card"><span class="profile-status status-yellow">更新模板</span><h3>统一的品牌档案字段</h3><p>每次价格或线路变化只需更新一处，品牌库、对比页和文章引用可以保持一致。</p><p><a class="text-link" href="/compare/">查看对比维度 →</a></p></article></div></div></section>';
+  return layout({ title: '机场品牌库', description: '自有机场品牌资料、套餐线路与风险核验档案。', path: '/brands/', content });
+}
+
+function comparePage() {
+  const rows = [
+    ['线路类型', '直连 / 中转 / BGP / IPLC', '说明入口、跨境段、出口和备用线路'],
+    ['套餐成本', '月付 / 季付 / 年付', '同时计算流量、倍率、设备数和重置规则'],
+    ['节点地区', '香港 / 日本 / 新加坡 / 美国等', '按真实使用场景判断，不追求数量'],
+    ['IP 属性', '机房 / 原生 / 家宽 / 住宅', '区分账号风控、内容解锁与线路速度'],
+    ['客户端', 'Windows / Mac / Android / iOS', '确认订阅格式和内核兼容性'],
+    ['服务风险', '公告 / 工单 / 退款 / 运营时间', '保留更新时间和可验证来源']
+  ].map((row) => '<tr><td><strong>' + row[0] + '</strong></td><td>' + row[1] + '</td><td>' + row[2] + '</td></tr>').join('');
+  const content = standardHero('COMPARE LAB', '横向对比：不只比价格，更要比真实使用成本', '把品牌放进同一套指标里比较，避免不同套餐口径、倍率和线路名称造成误判。') + '<section class="section"><div class="container"><table class="matrix compare-table"><thead><tr><th>对比项目</th><th>常见选项</th><th>核验方法</th></tr></thead><tbody>' + rows + '</tbody></table><div class="section-sm">' + brandBand() + '</div></div></section>';
+  return layout({ title: '机场横向对比', description: '机场线路、套餐、节点、IP、客户端和风险横向对比。', path: '/compare/', content });
+}
+
+function questionsPage() {
+  const troubleshooting = keywordGroups.find((item) => item.id === 'troubleshooting');
+  const subscription = keywordGroups.find((item) => item.id === 'subscription');
+  const items = troubleshooting.keywords.concat(subscription.keywords).map((keyword, index) => '<a class="route-card question-card" href="/articles/' + (index % 2 ? 'subscription-import' : 'peak-hour-slow') + '/"><span class="route-no">Q' + String(index + 1).padStart(2, '0') + '</span><h3>' + escapeHtml(keyword) + '</h3><p>查看现象、原因和逐层检查顺序。</p></a>').join('');
+  const content = standardHero('QUESTION DESK', '问题库：先找现象，再按顺序排查', '覆盖订阅失败、节点不显示、速度慢、连接超时、网页打不开和客户端配置错误。') + '<section class="section"><div class="container"><div class="route-grid">' + items + '</div></div></section>';
+  return layout({ title: '机场问题库', description: '机场订阅、节点、连接、速度和客户端问题排查知识库。', path: '/questions/', content });
+}
+
+function aboutPage() {
+  const content = standardHero('ABOUT THIS SITE', '关于本站：让每个结论都有更新时间和判断标准', '这是一个可持续维护的机场知识门户，内容围绕选择、线路、客户端、故障和场景展开。') + '<section class="section"><div class="container"><div class="topic-grid"><article class="topic-card"><span class="profile-status">01</span><h3>不复制品牌榜单</h3><p>不把参考站的推荐品牌搬进来，推广入口只留给你自己的品牌。</p></article><article class="topic-card"><span class="profile-status status-blue">02</span><h3>关键词对应内容</h3><p>全部关键词按搜索意图分组，指向文章、专题、客户端或问题库。</p></article><article class="topic-card"><span class="profile-status status-yellow">03</span><h3>持续更新而非一次性页面</h3><p>文章使用独立内容文件，新增或修改后会自动更新列表、RSS 和站点地图。</p></article></div></div></section>';
+  return layout({ title: '关于本站', description: '机场观察局的内容原则、更新方式和品牌政策。', path: '/about/', content });
+}
+
+function sharedIdPage() {
+  const content = standardHero('ACCOUNT SAFETY', '共享 ID：安全提示与官方账号入口', '本站不公开、收集或分发他人的账号密码。共享账号容易造成设备锁定、隐私泄露和支付风险。') + '<section class="section"><div class="narrow prose"><h2>为什么不直接提供共享账号</h2><p>在设备设置中登录陌生 Apple ID、Google 账号或其他共享账号，可能同步照片、通讯录、定位和购买记录，甚至触发激活锁。更安全的方式是通过官方页面注册自己的账号。</p><h2>安全使用原则</h2><ul><li>不要在系统 iCloud 设置中登录陌生账号。</li><li>不要向任何人提供验证码、恢复密钥或付款信息。</li><li>下载客户端时优先使用项目官网或官方应用商店。</li><li>发现设备锁定提示时立即停止操作并联系官方支持。</li></ul><p><a class="btn btn-primary" href="https://account.apple.com/" target="_blank" rel="noopener">打开 Apple 官方账号页面 ↗</a></p></div></section>';
+  return layout({ title: '共享 ID 安全指南', description: '共享 ID 风险提示与官方账号入口。', path: '/shared-id/', content });
+}
+
+function riskPage() {
+  const signals = ['官网、备用网址和客服同时失联', '长期大额折扣并强推年付', '线路持续缩水且没有公告', '工单长时间不回复或退款规则突然变化', '频繁更换域名、收款主体或品牌名称', '测速与宣传差距显著且拒绝说明'];
+  const cards = signals.map((signal, index) => '<article class="route-card risk-card"><span class="route-no">RISK ' + String(index + 1).padStart(2, '0') + '</span><h3>' + escapeHtml(signal) + '</h3><p>单个信号不能直接下结论，应结合时间、公告、用户反馈和可验证证据判断。</p></article>').join('');
+  const content = standardHero('RISK WATCH', '跑路预警：记录信号，不制造未经核实的结论', '提供风险检查清单和更新时间。当前不发布没有证据支持的品牌指控。') + '<section class="section"><div class="container"><div class="notice">当前状态：暂无已核验的品牌预警记录。后续记录必须包含日期、来源和处理结果。</div><div class="route-grid risk-grid">' + cards + '</div></div></section>';
+  return layout({ title: '机场跑路预警', description: '机场跑路风险信号、品牌核验与预警记录。', path: '/risk/', content });
 }
 
 function articlePage(article) {
@@ -399,9 +453,15 @@ async function build() {
   await writePage('topics', topicsPage());
   await writePage('ai-tools', aiToolsPage());
   await writePage('brand', brandPage());
+  await writePage('brands', brandsPage());
+  await writePage('compare', comparePage());
+  await writePage('questions', questionsPage());
+  await writePage('about', aboutPage());
+  await writePage('shared-id', sharedIdPage());
+  await writePage('risk', riskPage());
   for (const article of articles) await writePage(path.join('articles', article.slug), articlePage(article));
 
-  const fixedPaths = ['/', '/articles/', '/guides/', '/clients/', '/network/', '/regions/', '/topics/', '/ai-tools/', '/brand/'];
+  const fixedPaths = ['/', '/articles/', '/guides/', '/clients/', '/network/', '/regions/', '/topics/', '/ai-tools/', '/brand/', '/brands/', '/compare/', '/questions/', '/about/', '/shared-id/', '/risk/'];
   const urls = fixedPaths.concat(articles.map((article) => '/articles/' + article.slug + '/'));
   const sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls.map((url) => '  <url><loc>' + xmlEscape(config.baseUrl + url) + '</loc><lastmod>2026-10-22</lastmod></url>').join('\n') + '\n</urlset>\n';
   await fs.writeFile(path.join(outDir, 'sitemap.xml'), sitemap, 'utf8');
