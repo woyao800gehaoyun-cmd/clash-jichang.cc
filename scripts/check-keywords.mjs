@@ -25,6 +25,7 @@ if (missing.length) {
 }
 
 const missingArticles = [];
+const articleLengths = [];
 for (const group of keywordGroups) {
   for (const [index, keyword] of group.keywords.entries()) {
     for (const type of ['guide', 'checklist']) {
@@ -32,6 +33,9 @@ for (const group of keywordGroups) {
       const target = path.join(dist, 'articles', slug, 'index.html');
       const source = await fs.readFile(target, 'utf8').catch(() => '');
       if (!source.includes(keyword)) missingArticles.push(keyword + ' -> ' + slug);
+      const prose = source.match(/<article class="prose">([\s\S]*?)<div class="section-sm">/)?.[1] || '';
+      const characterCount = prose.replace(/<[^>]+>/g, '').replace(/&[^;]+;/g, '').replace(/\s+/g, '').length;
+      articleLengths.push({ slug, keyword, characterCount });
     }
   }
 }
@@ -40,5 +44,14 @@ if (missingArticles.length) {
   process.exit(1);
 }
 
+const outOfRange = articleLengths.filter((article) => article.characterCount < 1800 || article.characterCount > 2800);
+if (outOfRange.length) {
+  console.error('Keyword article length outside 1800-2800 characters:\n' + outOfRange.map((article) => article.slug + ': ' + article.characterCount).join('\n'));
+  process.exit(1);
+}
+
+const averageLength = Math.round(articleLengths.reduce((total, article) => total + article.characterCount, 0) / articleLengths.length);
+
 console.log('Keyword coverage OK: ' + keywords.length + ' unique phrases found.');
 console.log('Keyword article expansion OK: ' + keywords.length + ' keywords × 2 articles.');
+console.log('Keyword article length OK: ' + articleLengths.length + ' articles, average ' + averageLength + ' characters.');
