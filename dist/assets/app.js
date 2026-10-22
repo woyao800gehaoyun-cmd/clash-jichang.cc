@@ -73,3 +73,17 @@ articleSearch?.addEventListener('input', () => {
   });
   if (articleEmpty) articleEmpty.hidden = articleCards.some((card) => !card.hidden);
 });
+
+document.querySelectorAll('[data-copy-code]').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const code = button.dataset.copyCode || '';
+    try {
+      await navigator.clipboard.writeText(code);
+      const original = button.textContent;
+      button.textContent = '已复制';
+      window.setTimeout(() => { button.textContent = original; }, 1400);
+    } catch {
+      button.textContent = code;
+    }
+  });
+});

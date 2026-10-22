@@ -172,6 +172,11 @@ img { max-width: 100%; }
 .airport-card-top { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .airport-rank { color: color-mix(in srgb, var(--purple) 66%, var(--muted)); font: 900 .7rem ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; }
 .airport-card h2 { position: relative; z-index: 1; margin: 1.65rem 0 .55rem; font-size: clamp(1.35rem, 2vw, 1.55rem); letter-spacing: -.025em; }
+.airport-coupon { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .55rem; align-items: center; margin: .9rem 0; padding: .65rem .7rem; border: 1px dashed color-mix(in srgb, var(--purple) 42%, var(--line)); border-radius: 10px; background: color-mix(in srgb, var(--purple-soft) 48%, var(--surface)); }
+.airport-coupon span { color: var(--muted); font-size: .72rem; font-weight: 800; }
+.airport-coupon code { color: var(--purple-dark); font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: .9rem; font-weight: 900; letter-spacing: 0; }
+.airport-coupon button { padding: .34rem .55rem; color: var(--purple); border: 1px solid color-mix(in srgb, var(--purple) 32%, var(--line)); border-radius: 7px; background: var(--surface); font: inherit; font-size: .68rem; font-weight: 850; cursor: pointer; }
+.airport-coupon button:hover { color: white; border-color: var(--purple); background: var(--purple); }
 .airport-summary { max-width: 640px; margin: 0 0 .9rem; color: var(--muted); font-size: .84rem; }
 .airport-facts { display: grid; gap: .5rem; margin: 0 0 .85rem; }
 .airport-facts div { padding: .65rem .75rem; border-radius: 10px; background: var(--surface-2); }

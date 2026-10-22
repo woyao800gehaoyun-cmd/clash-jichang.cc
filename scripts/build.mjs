@@ -12,6 +12,7 @@ const airportPicks = [
     name: '光年梯',
     slug: 'guangnianti-review',
     url: 'https://gnt001.gntvipaff.cc/#/?code=FRrxGbbY',
+    coupon: 'GNT80',
     badge: '推荐 01',
     summary: '适合希望先从简洁入口了解套餐，再自行测试 Clash 订阅、晚高峰和常用场景的用户。',
     suitable: 'Clash 新手、日常网页、AI 与流媒体候选',
@@ -22,11 +23,56 @@ const airportPicks = [
     name: '极连云',
     slug: 'jilianyun-review',
     url: 'https://haozevpn.jlyvipaff.com/#/?code=KUKfOY13',
+    coupon: 'JLY888',
     badge: '推荐 02',
     summary: '适合重视多平台使用体验，并愿意在购买前核对客户端兼容、常用地区和高峰期表现的用户。',
     suitable: 'Windows、Mac、Android 与 iOS 多端候选',
     verify: '订阅格式、同时在线限制、线路说明与售后渠道',
     tags: ['极连云', '机场推荐', 'Clash 机场']
+  },
+  {
+    name: '快狸机场',
+    slug: 'kuaili-review',
+    url: 'https://kaelthw.kuailiaff.com/#/?code=rnTebHGr',
+    coupon: 'kl888',
+    badge: '推荐 03',
+    summary: '适合想先从短周期套餐开始，再验证 Clash 订阅、常用地区和多设备体验的用户。',
+    suitable: 'Clash 用户、日常网页、视频与 AI 工具候选',
+    verify: '优惠码生效、流量周期、节点倍率与设备数',
+    tags: ['快狸机场', 'Clash 机场', '机场优惠码']
+  },
+  {
+    name: '可信云机场',
+    slug: 'kexinyun-review',
+    url: 'https://xiaoyu33.kosingaff.com/#/?code=MuizUDqY',
+    coupon: 'kxy80',
+    badge: '推荐 04',
+    summary: '适合关注套餐成本、客户端兼容性与常用线路表现，并愿意自行完成高峰期测试的用户。',
+    suitable: '预算敏感用户、多端设备与日常使用候选',
+    verify: '折扣后价格、套餐限制、订阅格式与退款规则',
+    tags: ['可信云机场', '平价机场', '机场测评']
+  },
+  {
+    name: '速界机场',
+    slug: 'sujie-review',
+    url: 'https://lqy001.speedworldaff.com/#/register?code=p3EKNmlp',
+    coupon: 'sujie888',
+    badge: '推荐 05',
+    summary: '适合把连接速度、延迟和晚高峰稳定性作为重点，并愿意用真实任务连续测试的用户。',
+    suitable: '网页、视频、远程办公与低延迟需求候选',
+    verify: '节点路由、晚高峰波动、倍率与备用线路',
+    tags: ['速界机场', '高速机场', '低延迟机场']
+  },
+  {
+    name: '边缘节点机场',
+    slug: 'bianyuanjiedian-review',
+    url: 'https://cristyc.edgenovaaff.cc/#/register?code=WWiIvxL9',
+    coupon: 'xk808',
+    badge: '推荐 06',
+    summary: '适合希望比较不同地区节点、路由和备用方案，并重视多场景可用性的用户。',
+    suitable: '多地区节点、流媒体、AI 与跨境使用候选',
+    verify: '节点地区、IP 属性、目标网站可用性与备用节点',
+    tags: ['边缘节点机场', '节点机场', '机场推荐']
   }
 ];
 
@@ -662,6 +708,7 @@ function airportRecommendationCard(item, index) {
     '<h2>' + escapeHtml(item.name) + '</h2>',
     '<p class="airport-summary">' + escapeHtml(item.summary) + '</p>',
     '<dl class="airport-facts"><div><dt>适合人群</dt><dd>' + escapeHtml(item.suitable) + '</dd></div><div><dt>购买前核对</dt><dd>' + escapeHtml(item.verify) + '</dd></div></dl>',
+    '<div class="airport-coupon"><span>优惠码</span><code>' + escapeHtml(item.coupon) + '</code><button type="button" data-copy-code="' + escapeHtml(item.coupon) + '" aria-label="复制' + escapeHtml(item.name) + '优惠码">复制</button></div>',
     '<div class="tag-row">' + tags + '</div>',
     '<div class="airport-card-actions"><a class="btn btn-primary" href="' + item.url + '" target="_blank" rel="sponsored noopener noreferrer">访问官网 ↗</a><a class="btn btn-ghost" href="/articles/' + item.slug + '/">阅读测评</a></div>',
     '<p class="airport-link-note">外部链接含邀请码；打开后可能先进入线路检测页。</p>',
@@ -683,7 +730,7 @@ function brandBand() {
 function homePage(articles) {
   const latestCards = articles.filter((article) => !article.generated).slice(0, 6).map(articleCard).join('');
   const quickLinks = [
-    ['机场推荐与测评', '光年梯、极连云测评与官网入口', '/brands/', '推荐'],
+    ['机场推荐与测评', '6 个机场的优惠码、独立测评与官网入口', '/brands/', '推荐'],
     ['IPLC 与专线', '直连、中转、BGP 和专线怎么比较', '/articles/iplc-vs-transit/', '线路'],
     ['订阅与客户端', 'Clash、小火箭与各平台导入指南', '/clients/', '配置'],
     ['地区节点选择', '香港、日本、新加坡与美国节点用途', '/regions/', '地区'],
@@ -707,7 +754,7 @@ function homePage(articles) {
   const content = [
     '<section class="classic-home-hero"><div class="container classic-home-grid">',
     '<figure class="network-globe"><img src="/assets/network-globe.svg" width="720" height="560" alt="全球线路与节点连接示意图"><figcaption>全球线路示意 · 非实时测速数据</figcaption></figure>',
-    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>机场选择、配置与排障的长期更新指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。推荐页现已加入光年梯与极连云，并提供独立测评和购买前核验清单。</p><div class="hero-actions"><a class="btn btn-primary" href="/brands/">查看机场推荐</a><a class="btn btn-ghost" href="/articles/">进入科学上网知识库</a></div><div class="classic-home-keywords"><span>热门关键词</span>' + heroKeywords + '<a class="more" href="/topics/">全部 148 个词 →</a></div></div>',
+    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>机场选择、配置与排障的长期更新指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。推荐页已收录 6 个机场的官网入口、优惠码、独立测评和购买前核验清单。</p><div class="hero-actions"><a class="btn btn-primary" href="/brands/">查看机场推荐</a><a class="btn btn-ghost" href="/articles/">进入科学上网知识库</a></div><div class="classic-home-keywords"><span>热门关键词</span>' + heroKeywords + '<a class="more" href="/topics/">全部 148 个词 →</a></div></div>',
     '</div></section>',
     '<section class="home-quick-section"><div class="container"><div class="section-head"><div><p class="eyebrow">快速开始</p><h2 class="section-title">按你现在的问题进入</h2></div><a class="text-link" href="/topics/">浏览完整专题目录 →</a></div><div class="home-quick-grid">' + quickLinks + '</div></div></section>',
     '<section class="section home-latest"><div class="container"><div class="section-head"><div><p class="eyebrow">最近更新</p><h2 class="section-title">围绕真实问题持续补充</h2><p class="section-lead">从新手选择到订阅导入，从线路差异到晚高峰排查，每篇知识内容都保留清晰入口。</p></div><a class="text-link" href="/articles/">进入知识库 →</a></div><div class="article-grid">' + latestCards + '</div></div></section>',
@@ -732,7 +779,7 @@ function articlesPage(articles) {
   const articleMap = new Map(articles.map((article) => [article.slug, article]));
   const editorialGroups = [
     { id: 'getting-started', title: '入门与选购', description: '机场怎么选、套餐怎么比较，以及新手需要先核对什么。', slugs: ['2026-airport-guide', 'how-to-choose-airport'] },
-    { id: 'airport-reviews', title: '机场测评与推荐', description: '光年梯、极连云等机场入口、适用场景和购买前检查。', slugs: ['guangnianti-review', 'jilianyun-review'] },
+    { id: 'airport-reviews', title: '机场测评与推荐', description: '6 个机场的官网入口、优惠码、适用场景和购买前检查。', slugs: ['guangnianti-review', 'jilianyun-review', 'kuaili-review', 'kexinyun-review', 'sujie-review', 'bianyuanjiedian-review'] },
     { id: 'network-cost', title: '线路、IP 与流量成本', description: '理解 IPLC、中转、节点倍率、原生 IP 与住宅 IP。', slugs: ['iplc-vs-transit', 'node-multiplier', 'native-residential-ip'] },
     { id: 'clients-troubleshooting', title: '客户端、订阅与故障排查', description: '处理订阅导入、节点异常、晚高峰和连接速度问题。', slugs: ['subscription-import', 'peak-hour-slow'] }
   ].map((group) => ({ ...group, articles: group.slugs.map((slug) => articleMap.get(slug)).filter(Boolean) }));
@@ -800,14 +847,14 @@ function aiToolsPage() {
 }
 
 function brandPage() {
-  const content = standardHero('AIRPORT PICKS', '机场推荐入口已经迁移', '光年梯与极连云的官网入口、购买前检查项和独立测评现已集中到机场推荐页。') + '<section class="section"><div class="container"><div class="brand-band"><p class="eyebrow">NEW RECOMMENDATION PAGE</p><h2>进入 Clash 梯子推荐专题</h2><p>先阅读测评和风险提示，再根据自己的设备、地区与使用时段进行短周期测试。</p><a class="btn" href="/brands/">查看机场推荐</a></div></div></section>';
-  return layout({ title: '机场推荐入口', description: '光年梯与极连云机场推荐入口。', path: '/brand/', content, noindex: true });
+  const content = standardHero('AIRPORT PICKS', '机场推荐入口已经迁移', '6 个机场的官网入口、优惠码、购买前检查项和独立测评现已集中到机场推荐页。') + '<section class="section"><div class="container"><div class="brand-band"><p class="eyebrow">NEW RECOMMENDATION PAGE</p><h2>进入 Clash 梯子推荐专题</h2><p>先阅读测评和风险提示，再根据自己的设备、地区与使用时段进行短周期测试。</p><a class="btn" href="/brands/">查看机场推荐</a></div></div></section>';
+  return layout({ title: '机场推荐入口', description: '6 个机场的优惠码、测评与官网入口。', path: '/brand/', content, noindex: true });
 }
 
 function brandsPage() {
   const cards = airportPicks.map(airportRecommendationCard).join('');
-  const content = '<section class="recommend-page-hero"><div class="recommend-container"><div class="crumbs"><a href="/">首页</a> / 机场推荐</div><p class="eyebrow">CLASH AIRPORT PICKS</p><h1>Clash 梯子推荐：光年梯与极连云</h1><p>两项机场推荐均提供官网入口与独立测评。请先核对套餐、设备限制和退款规则，并优先短周期测试。</p></div></section>' + '<section class="recommend-page-body"><div class="recommend-container"><div class="affiliate-disclosure"><strong>推广说明</strong><span>本页外部链接包含邀请码，站点可能因此获得推广收益，但不会提高你的购买价格。服务信息可能变化，请以官网实时页面为准。</span></div><div class="airport-recommend-grid">' + cards + '</div><div class="recommend-method"><p class="eyebrow">HOW WE REVIEW</p><h2>推荐前先检查这三件事</h2><div class="topic-grid"><article class="topic-card"><span class="profile-status">01</span><h3>先买短周期</h3><p>先确认订阅能导入自己的客户端，再测试常用时间段，避免只因年付折扣做决定。</p></article><article class="topic-card"><span class="profile-status status-blue">02</span><h3>测试真实场景</h3><p>网页、视频、AI、办公和游戏的要求不同，不用单次测速替代连续使用体验。</p></article><article class="topic-card"><span class="profile-status status-yellow">03</span><h3>核对限制</h3><p>重点确认流量、倍率、设备数、重置日期、工单渠道和退款条件。</p></article></div></div></div></section>';
-  return layout({ title: 'Clash 梯子推荐', description: '光年梯与极连云机场推荐、官网入口与独立测评。', path: '/brands/', content, schema: { '@context': 'https://schema.org', '@type': 'ItemList', name: 'Clash 梯子推荐', numberOfItems: airportPicks.length, itemListElement: airportPicks.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, url: config.baseUrl + '/articles/' + item.slug + '/' })) } });
+  const content = '<section class="recommend-page-hero"><div class="recommend-container"><div class="crumbs"><a href="/">首页</a> / 机场推荐</div><p class="eyebrow">CLASH AIRPORT PICKS</p><h1>Clash 梯子推荐：6 个机场测评与优惠码</h1><p>光年梯、极连云、快狸、可信云、速界和边缘节点均提供官网入口、优惠码与独立测评。请先核对套餐、设备限制和退款规则，并优先短周期测试。</p></div></section>' + '<section class="recommend-page-body"><div class="recommend-container"><div class="affiliate-disclosure"><strong>推广说明</strong><span>本页外部链接包含邀请码，站点可能因此获得推广收益，但不会提高你的购买价格。优惠是否适用及服务信息可能变化，请以官网实时结算页面为准。</span></div><div class="airport-recommend-grid">' + cards + '</div><div class="recommend-method"><p class="eyebrow">HOW WE REVIEW</p><h2>推荐前先检查这三件事</h2><div class="topic-grid"><article class="topic-card"><span class="profile-status">01</span><h3>先买短周期</h3><p>先确认订阅能导入自己的客户端，再测试常用时间段，避免只因年付折扣做决定。</p></article><article class="topic-card"><span class="profile-status status-blue">02</span><h3>测试真实场景</h3><p>网页、视频、AI、办公和游戏的要求不同，不用单次测速替代连续使用体验。</p></article><article class="topic-card"><span class="profile-status status-yellow">03</span><h3>核对限制</h3><p>重点确认流量、倍率、设备数、重置日期、工单渠道和退款条件。</p></article></div></div></div></section>';
+  return layout({ title: 'Clash 梯子推荐', description: '6 个机场的优惠码、官网入口、适用场景与独立测评。', path: '/brands/', content, schema: { '@context': 'https://schema.org', '@type': 'ItemList', name: 'Clash 梯子推荐', numberOfItems: airportPicks.length, itemListElement: airportPicks.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, url: config.baseUrl + '/articles/' + item.slug + '/' })) } });
 }
 
 function comparePage() {
