@@ -21,3 +21,13 @@
 dist 是纯静态输出，可部署到 GitHub Pages、Cloudflare Pages、Vercel、Netlify 或任意支持静态文件的服务器。构建命令为 npm run build，输出目录为 dist。
 
 Cloudflare Pages 使用 Git 仓库部署时，请将根目录留空，构建命令设为 `npm run build`，输出目录设为 `dist`。仓库根目录保留 `_redirects` 作为兼容规则：如果 Cloudflare 没有执行构建而直接上传仓库根目录，访问请求会临时重写到 `dist/`，避免首页 404。
+
+## IndexNow
+
+构建时会在 `dist` 根目录生成固定的 IndexNow 验证文件。部署完成并确认验证文件可以通过公网访问后，运行以下命令提交站点地图中的全部 URL：
+
+1. `npm run build`
+2. `npm run indexnow:check` 检查待提交 URL 数量与验证地址。
+3. `npm run indexnow` 向 IndexNow 批量提交 URL。
+
+新增或更新文章后，可以再次运行 `npm run indexnow` 通知支持 IndexNow 的搜索引擎。

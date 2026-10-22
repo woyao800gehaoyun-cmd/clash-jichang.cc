@@ -8,6 +8,8 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/check-keywords.mjs",
     "check:links": "node scripts/check-links.mjs",
+    "indexnow": "node scripts/submit-indexnow.mjs",
+    "indexnow:check": "node scripts/submit-indexnow.mjs --dry-run",
     "dev": "node scripts/serve.mjs"
   }
 }

@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import config from '../site.config.mjs';
+import { indexNowKey } from '../indexnow.config.mjs';
 import { navItems, keywordGroups, aiGroups, clientMatrix, regionCards } from '../src/data.mjs';
 
 const root = process.cwd();
@@ -965,6 +966,7 @@ async function build() {
   await fs.writeFile(path.join(outDir, 'sitemap.xml'), sitemap, 'utf8');
   await fs.writeFile(path.join(outDir, 'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: ' + config.baseUrl + '/sitemap.xml\n', 'utf8');
   await fs.writeFile(path.join(outDir, 'CNAME'), new URL(config.baseUrl).hostname + '\n', 'utf8');
+  await fs.writeFile(path.join(outDir, indexNowKey + '.txt'), indexNowKey + '\n', 'utf8');
 
   const rssItems = editorialArticles.slice(0, 20).map((article) => '<item><title>' + xmlEscape(article.title) + '</title><link>' + config.baseUrl + '/articles/' + article.slug + '/</link><guid>' + config.baseUrl + '/articles/' + article.slug + '/</guid><pubDate>' + new Date(article.date + 'T08:00:00+08:00').toUTCString() + '</pubDate><description>' + xmlEscape(article.description) + '</description></item>').join('');
   const rss = '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>' + xmlEscape(config.siteName) + '</title><link>' + config.baseUrl + '</link><description>' + xmlEscape(config.description) + '</description><language>zh-cn</language>' + rssItems + '</channel></rss>';
