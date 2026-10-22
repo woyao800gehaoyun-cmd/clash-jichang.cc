@@ -1,7 +1,7 @@
 export const navItems = [
   ['首页', '/'],
   ['机场推荐', '/brands/'],
-  ['博客文章', '/articles/'],
+  ['科学上网知识库', '/articles/'],
   ['专题目录', '/topics/'],
   ['横向对比', '/compare/'],
   ['问题库', '/questions/'],

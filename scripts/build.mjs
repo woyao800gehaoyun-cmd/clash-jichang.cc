@@ -207,7 +207,7 @@ function footer() {
     '<div class="container">',
     '<div class="footer-grid">',
     '<div><h3>' + escapeHtml(config.siteName) + '</h3><p>机场选择、线路原理、客户端配置与网络排障知识库。内容用于技术研究与合规网络访问，请遵守所在地法律法规及服务条款。</p></div>',
-    '<div><h3>内容入口</h3><div class="footer-links"><a href="/brands/">机场推荐</a><a href="/articles/">博客文章</a><a href="/topics/">专题目录</a><a href="/compare/">横向对比</a></div></div>',
+    '<div><h3>内容入口</h3><div class="footer-links"><a href="/brands/">机场推荐</a><a href="/articles/">科学上网知识库</a><a href="/topics/">专题目录</a><a href="/compare/">横向对比</a></div></div>',
     '<div><h3>站点服务</h3><div class="footer-links"><a href="/questions/">问题库</a><a href="/ai-tools/">AI 工具</a><a href="/risk/">跑路预警</a><a href="/about/">关于本站</a></div></div>',
     '</div>',
     '<div class="footer-bottom"><span>© 2026 ' + escapeHtml(config.siteName) + '</span><span>推广链接含邀请码 · 购买前请核验实时信息</span></div>',
@@ -333,10 +333,10 @@ function homePage(articles) {
   const content = [
     '<section class="classic-home-hero"><div class="container classic-home-grid">',
     '<figure class="network-globe"><img src="/assets/network-globe.svg" width="720" height="560" alt="全球线路与节点连接示意图"><figcaption>全球线路示意 · 非实时测速数据</figcaption></figure>',
-    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>机场选择、配置与排障的长期更新指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。推荐页现已加入光年梯与极连云，并提供独立测评和购买前核验清单。</p><div class="hero-actions"><a class="btn btn-primary" href="/brands/">查看机场推荐</a><a class="btn btn-ghost" href="/articles/">阅读最新文章</a></div><div class="classic-home-keywords"><span>热门关键词</span>' + heroKeywords + '<a class="more" href="/topics/">全部 148 个词 →</a></div></div>',
+    '<div class="classic-home-copy"><p class="eyebrow">2026 机场知识与客户端指南</p><h1>机场选择、配置与排障的长期更新指南</h1><p>持续更新机场推荐、线路原理、节点倍率、Clash 配置、流媒体与 AI 场景。推荐页现已加入光年梯与极连云，并提供独立测评和购买前核验清单。</p><div class="hero-actions"><a class="btn btn-primary" href="/brands/">查看机场推荐</a><a class="btn btn-ghost" href="/articles/">进入科学上网知识库</a></div><div class="classic-home-keywords"><span>热门关键词</span>' + heroKeywords + '<a class="more" href="/topics/">全部 148 个词 →</a></div></div>',
     '</div></section>',
     '<section class="home-quick-section"><div class="container"><div class="section-head"><div><p class="eyebrow">快速开始</p><h2 class="section-title">按你现在的问题进入</h2></div><a class="text-link" href="/topics/">浏览完整专题目录 →</a></div><div class="home-quick-grid">' + quickLinks + '</div></div></section>',
-    '<section class="section home-latest"><div class="container"><div class="section-head"><div><p class="eyebrow">最近更新</p><h2 class="section-title">围绕真实问题持续补充</h2><p class="section-lead">从新手选择到订阅导入，从线路差异到晚高峰排查，每篇文章都保留清晰入口。</p></div><a class="text-link" href="/articles/">全部文章 →</a></div><div class="article-grid">' + latestCards + '</div></div></section>',
+    '<section class="section home-latest"><div class="container"><div class="section-head"><div><p class="eyebrow">最近更新</p><h2 class="section-title">围绕真实问题持续补充</h2><p class="section-lead">从新手选择到订阅导入，从线路差异到晚高峰排查，每篇知识内容都保留清晰入口。</p></div><a class="text-link" href="/articles/">进入知识库 →</a></div><div class="article-grid">' + latestCards + '</div></div></section>',
     '<section class="section home-keywords"><div class="container"><div class="section-head"><div><p class="eyebrow">常用检索</p><h2 class="section-title">机场关键词与问题入口</h2><p class="section-lead">常见搜索词按主题分组，点击即可进入对应指南，不用在一长串词里寻找答案。</p></div><a class="text-link" href="/topics/">查看全部 148 个词 →</a></div><div class="home-keyword-grid">' + keywordSections + '</div></div></section>',
     '<section class="section-sm"><div class="container">' + brandBand() + '</div></section>'
   ].join('');
@@ -355,9 +355,21 @@ function standardHero(eyebrow, title, description) {
 }
 
 function articlesPage(articles) {
-  const cards = articles.map(articleCard).join('');
-  const content = standardHero('ALL ARTICLES', '从选择到排障，建立自己的判断框架', '文章围绕线路、客户端、订阅、IP、倍率、晚高峰和使用场景持续更新。') + '<section class="section-sm"><div class="container"><div class="search-wrap"><input class="search-input" data-article-search type="search" placeholder="搜索文章、场景或关键词…" aria-label="搜索文章"></div><div class="article-grid">' + cards + '</div></div></section>';
-  return layout({ title: '全部文章', description: '机场选择、线路、客户端与网络排障文章合集。', path: '/articles/', content });
+  const articleMap = new Map(articles.map((article) => [article.slug, article]));
+  const groups = [
+    { id: 'getting-started', title: '入门与选购', description: '机场怎么选、套餐怎么比较，以及新手需要先核对什么。', slugs: ['2026-airport-guide', 'how-to-choose-airport'] },
+    { id: 'airport-reviews', title: '机场测评与推荐', description: '光年梯、极连云等机场入口、适用场景和购买前检查。', slugs: ['guangnianti-review', 'jilianyun-review'] },
+    { id: 'network-cost', title: '线路、IP 与流量成本', description: '理解 IPLC、中转、节点倍率、原生 IP 与住宅 IP。', slugs: ['iplc-vs-transit', 'node-multiplier', 'native-residential-ip'] },
+    { id: 'clients-troubleshooting', title: '客户端、订阅与故障排查', description: '处理订阅导入、节点异常、晚高峰和连接速度问题。', slugs: ['subscription-import', 'peak-hour-slow'] }
+  ];
+  const sidebar = groups.map((group) => '<a href="#' + group.id + '"><span>' + escapeHtml(group.title) + '</span><b>' + group.slugs.length + '</b></a>').join('');
+  const tableRows = groups.map((group) => '<tr><td><strong>' + escapeHtml(group.title) + '</strong></td><td>' + escapeHtml(group.description) + '</td><td><a class="text-link" href="#' + group.id + '">查看 ' + group.slugs.length + ' 篇 →</a></td></tr>').join('');
+  const sections = groups.map((group) => {
+    const entries = group.slugs.map((slug) => articleMap.get(slug)).filter(Boolean).map((article) => '<a class="knowledge-entry" data-article-card href="/articles/' + article.slug + '/"><div class="knowledge-entry-meta"><span>' + escapeHtml(article.category) + '</span><span>' + escapeHtml(article.readTime) + '</span></div><div><h3>' + escapeHtml(article.title) + '</h3><p>' + escapeHtml(article.description) + '</p></div><b aria-hidden="true">→</b></a>').join('');
+    return '<section class="knowledge-section" id="' + group.id + '"><div class="knowledge-section-head"><div><h2>' + escapeHtml(group.title) + '</h2><p>' + escapeHtml(group.description) + '</p></div><span>' + group.slugs.length + ' 篇</span></div><div class="knowledge-list">' + entries + '</div></section>';
+  }).join('');
+  const content = '<section class="knowledge-hero"><div class="knowledge-container"><div class="crumbs"><a href="/">首页</a> / 科学上网知识库</div><p class="eyebrow">PROXY KNOWLEDGE BASE</p><h1>科学上网知识库：机场、线路、客户端与排障指南</h1><p>从机场选择和订阅导入，到线路原理、节点倍率、IP 类型与晚高峰排查，按问题分类查找答案。</p></div></section><section class="knowledge-body"><div class="knowledge-container knowledge-layout"><aside class="knowledge-sidebar"><strong>知识库分类</strong><nav>' + sidebar + '</nav><a class="knowledge-side-link" href="/topics/">查看 148 个关键词 →</a></aside><div class="knowledge-main"><div class="search-wrap knowledge-search"><input class="search-input" data-article-search type="search" placeholder="搜索知识、场景或关键词…" aria-label="搜索科学上网知识库"></div><section class="knowledge-overview"><div class="knowledge-section-head"><div><p class="eyebrow">START HERE</p><h2>知识库分类导航</h2></div></div><table class="matrix knowledge-table"><thead><tr><th>分类</th><th>适合解决的问题</th><th>入口</th></tr></thead><tbody>' + tableRows + '</tbody></table></section>' + sections + '</div></div></section>';
+  return layout({ title: '科学上网知识库', description: '机场选择、线路协议、客户端订阅、IP 类型、流量倍率与网络故障排查知识库。', path: '/articles/', content, schema: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: '科学上网知识库', url: config.baseUrl + '/articles/' } });
 }
 
 function guidesPage() {
@@ -459,8 +471,8 @@ function articlePage(article) {
   const toc = article.headings.filter((heading) => heading.level === 2).map((heading) => '<a href="#' + heading.id + '">' + escapeHtml(heading.text) + '</a>').join('');
   const tags = article.tags.map((tag) => '<span class="tag">' + escapeHtml(tag) + '</span>').join('');
   const content = [
-    '<header class="article-header"><div class="container"><div class="crumbs"><a href="/">首页</a> / <a href="/articles/">文章</a> / ' + escapeHtml(article.category) + '</div><div class="tag-row">' + tags + '</div><h1>' + escapeHtml(article.title) + '</h1><p class="article-deck">' + escapeHtml(article.description) + '</p><div class="article-byline"><span>更新 ' + escapeHtml(article.updated) + '</span><span>' + escapeHtml(article.readTime) + '</span><span>' + escapeHtml(config.author) + '</span></div></div></header>',
-    '<div class="container article-layout"><article class="prose">' + article.html + '<div class="section-sm">' + brandBand() + '</div></article><aside class="article-aside"><strong>文章目录</strong><nav class="toc">' + toc + '</nav></aside></div>'
+    '<header class="article-header"><div class="container"><div class="crumbs"><a href="/">首页</a> / <a href="/articles/">科学上网知识库</a> / ' + escapeHtml(article.category) + '</div><div class="tag-row">' + tags + '</div><h1>' + escapeHtml(article.title) + '</h1><p class="article-deck">' + escapeHtml(article.description) + '</p><div class="article-byline"><span>更新 ' + escapeHtml(article.updated) + '</span><span>' + escapeHtml(article.readTime) + '</span><span>' + escapeHtml(config.author) + '</span></div></div></header>',
+    '<div class="container article-layout"><article class="prose">' + article.html + '<div class="section-sm">' + brandBand() + '</div></article><aside class="article-aside"><strong>本页目录</strong><nav class="toc">' + toc + '</nav></aside></div>'
   ].join('');
   return layout({
     title: article.title,
