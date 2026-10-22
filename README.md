@@ -19,3 +19,5 @@
 ## 部署
 
 dist 是纯静态输出，可部署到 GitHub Pages、Cloudflare Pages、Vercel、Netlify 或任意支持静态文件的服务器。构建命令为 npm run build，输出目录为 dist。
+
+Cloudflare Pages 使用 Git 仓库部署时，请将根目录留空，构建命令设为 `npm run build`，输出目录设为 `dist`。仓库根目录保留 `_redirects` 作为兼容规则：如果 Cloudflare 没有执行构建而直接上传仓库根目录，访问请求会临时重写到 `dist/`，避免首页 404。
