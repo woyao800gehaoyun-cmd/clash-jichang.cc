@@ -1,6 +1,6 @@
 export default {
-  siteName: '机场观察局',
-  shortName: 'AIRPORT ATLAS',
+  siteName: 'clash梯子推荐',
+  shortName: 'CLASH AIRPORT PICKS',
   baseUrl: 'https://clash-jichang.cc',
   description: '面向中文用户的机场选择、线路原理、客户端配置、节点排障与 AI 工具知识库。',
   author: '链路研究所编辑部',

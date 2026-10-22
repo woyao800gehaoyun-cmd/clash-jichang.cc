@@ -440,7 +440,7 @@ function questionsPage() {
 
 function aboutPage() {
   const content = standardHero('ABOUT THIS SITE', '关于本站：让每个结论都有更新时间和判断标准', '这是一个可持续维护的机场知识门户，内容围绕选择、线路、客户端、故障和场景展开。') + '<section class="section"><div class="container"><div class="topic-grid"><article class="topic-card"><span class="profile-status">01</span><h3>明确披露推广链接</h3><p>机场推荐页会标注邀请码与推广关系，服务价格、线路和套餐变化以官网实时信息为准。</p></article><article class="topic-card"><span class="profile-status status-blue">02</span><h3>关键词对应内容</h3><p>全部关键词按搜索意图分组，指向文章、专题、客户端或问题库。</p></article><article class="topic-card"><span class="profile-status status-yellow">03</span><h3>持续更新而非一次性页面</h3><p>文章使用独立内容文件，新增或修改后会自动更新列表、RSS 和站点地图。</p></article></div></div></section>';
-  return layout({ title: '关于本站', description: '机场观察局的内容原则、更新方式和品牌政策。', path: '/about/', content });
+  return layout({ title: '关于本站', description: 'clash梯子推荐的内容原则、更新方式和品牌政策。', path: '/about/', content });
 }
 
 function sharedIdPage() {
