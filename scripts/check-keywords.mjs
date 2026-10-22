@@ -23,4 +23,22 @@ if (missing.length) {
   console.error('Missing keywords:\n' + missing.join('\n'));
   process.exit(1);
 }
+
+const missingArticles = [];
+for (const group of keywordGroups) {
+  for (const [index, keyword] of group.keywords.entries()) {
+    for (const type of ['guide', 'checklist']) {
+      const slug = 'keyword-' + group.id + '-' + String(index + 1).padStart(2, '0') + '-' + type;
+      const target = path.join(dist, 'articles', slug, 'index.html');
+      const source = await fs.readFile(target, 'utf8').catch(() => '');
+      if (!source.includes(keyword)) missingArticles.push(keyword + ' -> ' + slug);
+    }
+  }
+}
+if (missingArticles.length) {
+  console.error('Missing keyword article pages:\n' + missingArticles.join('\n'));
+  process.exit(1);
+}
+
 console.log('Keyword coverage OK: ' + keywords.length + ' unique phrases found.');
+console.log('Keyword article expansion OK: ' + keywords.length + ' keywords × 2 articles.');

@@ -60,9 +60,16 @@ if (themeButton) {
 
 const articleSearch = document.querySelector('[data-article-search]');
 const articleCards = [...document.querySelectorAll('[data-article-card]')];
+const knowledgeSections = [...document.querySelectorAll('[data-knowledge-section]')];
+const articleEmpty = document.querySelector('[data-article-empty]');
 articleSearch?.addEventListener('input', () => {
   const query = articleSearch.value.trim().toLowerCase();
   articleCards.forEach((card) => {
-    card.hidden = query && !card.textContent.toLowerCase().includes(query);
+    card.hidden = Boolean(query) && !card.textContent.toLowerCase().includes(query);
   });
+  knowledgeSections.forEach((section) => {
+    const cards = [...section.querySelectorAll('[data-article-card]')];
+    section.hidden = Boolean(query) && !cards.some((card) => !card.hidden);
+  });
+  if (articleEmpty) articleEmpty.hidden = articleCards.some((card) => !card.hidden);
 });

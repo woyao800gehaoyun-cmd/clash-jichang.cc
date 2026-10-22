@@ -177,6 +177,184 @@ async function readArticles() {
   return articles.sort((a, b) => b.date.localeCompare(a.date));
 }
 
+const keywordArticlePlans = {
+  choose: {
+    category: '选择与品牌核验',
+    guideTitle: (keyword) => /怎么|如何|是否|指南|避坑/.test(keyword) ? keyword + '：从需求到试用的完整判断方法' : keyword + '怎么判断？从需求到试用的完整选择方法',
+    checklistTitle: (keyword) => keyword + '核对清单：购买前需要确认的 8 个问题',
+    guideDescription: (keyword) => '拆解“' + keyword + '”背后的需求、品牌核验指标、短周期试用方法与风险判断。',
+    checklistDescription: (keyword) => '提供“' + keyword + '”购买前核对清单，覆盖入口、套餐、线路、售后与付款风险。',
+    guideIntro: '这类搜索通常同时包含“是否适合自己”和“宣传是否可信”两个问题。不要先看口号，应先把需求、预算、设备和常用时段写清楚。',
+    guideChecks: ['明确常用设备、地区和目标网站', '分别记录白天与晚高峰的实际体验', '核对设备数、倍率、退款和工单规则', '先用月付或试用验证，再决定是否延长周期'],
+    checklistFocus: '运营时间、公告连续性、入口稳定性、售后响应与付款风险'
+  },
+  subscription: {
+    category: '订阅与节点',
+    guideTitle: (keyword) => keyword + '使用指南：链接、节点与更新机制一次讲清',
+    checklistTitle: (keyword) => keyword + '出问题怎么办？导入、更新与连接排查清单',
+    guideDescription: (keyword) => '说明“' + keyword + '”的链接、节点、客户端解析与订阅更新机制。',
+    checklistDescription: (keyword) => '排查“' + keyword + '”的格式、缓存、节点分组、系统代理与连接异常。',
+    guideIntro: '订阅负责把服务器信息交给客户端，节点负责实际承载连接，两者不是同一个概念。判断问题时要把链接、客户端解析、节点状态和本地网络分开。',
+    guideChecks: ['确认链接完整且没有多余空格', '核对客户端支持的订阅格式与内核版本', '更新后检查节点数量、分组和更新时间', '在可信设备中保存订阅，不公开分享完整地址'],
+    checklistFocus: '订阅有效期、导入格式、更新缓存、节点分组与系统代理'
+  },
+  scenarios: {
+    category: '使用场景',
+    guideTitle: (keyword) => keyword + '怎么选？按线路、地区与 IP 类型匹配场景',
+    checklistTitle: (keyword) => keyword + '可用性检查：速度正常却打不开时怎么处理',
+    guideDescription: (keyword) => '分析“' + keyword + '”需要的地区、线路、IP 属性与连续稳定性。',
+    checklistDescription: (keyword) => '检查“' + keyword + '”的地区、DNS、账号条件、IP 属性与目标服务限制。',
+    guideIntro: '网页、AI、流媒体、直播与跨境办公对线路的要求不同。速度只是基础，目标地区、IP 属性、账号风控和连续稳定性同样重要。',
+    guideChecks: ['确认目标服务支持的地区与账号条件', '使用实际账号测试登录、播放或提交任务', '比较常用时间段的连续稳定性而非单次峰值', '准备备用地区与备用节点，避免单点依赖'],
+    checklistFocus: '目标地区、IP 属性、DNS、账号地区、版权限制与连续连接'
+  },
+  price: {
+    category: '价格与套餐',
+    guideTitle: (keyword) => keyword + '：套餐、流量与倍率成本指南',
+    checklistTitle: (keyword) => keyword + '购买清单：低价、折扣与长期套餐的风险点',
+    guideDescription: (keyword) => '计算“' + keyword + '”的套餐周期、流量、节点倍率与真实使用成本。',
+    checklistDescription: (keyword) => '核对“' + keyword + '”的续费价格、流量重置、设备数、折扣与退款条件。',
+    guideIntro: '标价不能代表真实成本。比较套餐时还要计算流量、节点倍率、重置日期、设备数和实际可用线路，避免只看月均价格。',
+    guideChecks: ['把月付价格换算成每 GB 可用流量成本', '确认高倍率节点会如何扣减流量', '核对流量重置日期与未用流量是否结转', '长期套餐只在短周期验证后再考虑'],
+    checklistFocus: '付款周期、倍率、流量重置、设备限制、续费价格与退款条件'
+  },
+  network: {
+    category: '线路与网络',
+    guideTitle: (keyword) => keyword + '：线路、IP、倍率与审计选择指南',
+    checklistTitle: (keyword) => keyword + '核验清单：宣传名词如何转成可测试指标',
+    guideDescription: (keyword) => '解释“' + keyword + '”涉及的接入、跨境段、出口、IP、倍率与审计规则。',
+    checklistDescription: (keyword) => '把“' + keyword + '”的线路宣传转成延迟、丢包、回程、倍率和备用线路检查项。',
+    guideIntro: '线路名称不能单独证明质量。入口、跨境段、出口、回程、IP 属性和拥塞控制共同决定体验，需要把宣传术语转成可观察的结果。',
+    guideChecks: ['确认线路名称对应的实际接入和出口说明', '在相同设备与网络下比较延迟、丢包和波动', '区分原生、家宽、住宅与普通机房 IP 的用途', '理解倍率、审计和可接受使用规则'],
+    checklistFocus: '接入方式、跨境段、出口地区、IP 属性、倍率、日志与备用线路'
+  },
+  protocols: {
+    category: '协议与客户端',
+    guideTitle: (keyword) => keyword + '配置指南：客户端、协议与多设备怎么匹配',
+    checklistTitle: (keyword) => keyword + '故障排查：导入失败、无节点与设备限制',
+    guideDescription: (keyword) => '说明“' + keyword + '”与客户端、协议、订阅格式、系统权限和多设备规则的关系。',
+    checklistDescription: (keyword) => '排查“' + keyword + '”的版本来源、内核兼容、系统代理、权限与设备限制。',
+    guideIntro: '客户端、协议和订阅格式必须互相兼容。安装成功不等于配置正确，还要检查内核、系统代理、VPN 权限、后台运行和设备数量限制。',
+    guideChecks: ['只从项目官网或可信应用商店获取客户端', '核对订阅格式与客户端内核是否兼容', '检查系统代理、VPN 权限和后台运行限制', '多设备使用前确认同时在线规则'],
+    checklistFocus: '版本来源、内核兼容、系统权限、代理模式、设备数与订阅更新'
+  },
+  regions: {
+    category: '地区与节点',
+    guideTitle: (keyword) => keyword + '选择指南：延迟、回程、IP 与场景怎么平衡',
+    checklistTitle: (keyword) => keyword + '测试清单：如何判断节点是否真的适合你',
+    guideDescription: (keyword) => '从物理距离、回程、晚高峰、IP 属性和目标服务分析“' + keyword + '”。',
+    checklistDescription: (keyword) => '测试“' + keyword + '”的延迟、波动、入口运营商、内容可用性与备用节点。',
+    guideIntro: '节点地区越多不代表越好。物理距离影响基础延迟，线路与回程影响波动，IP 属性和目标服务规则决定实际可用性。',
+    guideChecks: ['优先测试地理位置较近且路由稳定的地区', '用自己的运营商网络观察晚高峰波动', '验证目标网站、流媒体或账号服务是否可用', '至少准备一个不同地区的备用节点'],
+    checklistFocus: '物理距离、入口运营商、回程、晚高峰、IP 属性与目标服务地区'
+  },
+  compare: {
+    category: '方案对比',
+    guideTitle: (keyword) => keyword + '完整对比：成本、维护与适用人群',
+    checklistTitle: (keyword) => keyword + '怎么选？用 6 个问题确定更合适的方案',
+    guideDescription: (keyword) => '对比“' + keyword + '”涉及的成本、维护、隐私、设备数量与故障责任。',
+    checklistDescription: (keyword) => '用价格、维护、隐私、迁移和长期可控性判断“' + keyword + '”。',
+    guideIntro: '不同网络方案解决的问题、维护成本和责任边界并不相同。比较时应统一需求和时间周期，而不是只对照价格或某个速度数字。',
+    guideChecks: ['比较初始费用与持续维护时间', '明确谁负责线路、客户端和故障处理', '评估设备数量、共享需求与技术能力', '考虑备用方案、迁移成本和合规要求'],
+    checklistFocus: '价格、维护、隐私、设备、故障责任、迁移与长期可控性'
+  },
+  troubleshooting: {
+    category: '故障排查',
+    guideTitle: (keyword) => keyword.endsWith('怎么办') ? keyword + '：从本地网络到节点的逐层排查' : keyword + '怎么办？从本地网络到节点的逐层排查',
+    checklistTitle: (keyword) => keyword + '快速修复清单：现象、原因与验证步骤',
+    guideDescription: (keyword) => '针对“' + keyword + '”按本地网络、客户端、订阅、节点、DNS 和目标网站逐层排查。',
+    checklistDescription: (keyword) => '整理“' + keyword + '”的快速验证步骤、常见原因与单变量排障方法。',
+    guideIntro: '排障最重要的是一次只改变一个变量。先确认本地网络，再检查客户端、订阅、节点、DNS 和目标网站，避免反复重装却没有定位原因。',
+    guideChecks: ['先确认普通网站和本地网络是否正常', '检查客户端日志、系统时间、代理模式和权限', '更新订阅并更换不同地区或不同线路节点', '区分全局故障、单站限制与账号问题'],
+    checklistFocus: '本地网络、系统时间、客户端日志、订阅状态、节点、DNS 与目标网站'
+  }
+};
+
+function keywordArticleSlug(groupId, keywordIndex, type) {
+  return 'keyword-' + groupId + '-' + String(keywordIndex + 1).padStart(2, '0') + '-' + type;
+}
+
+function keywordArticlePath(groupId, keyword, type = 'guide') {
+  const group = keywordGroups.find((item) => item.id === groupId);
+  const index = group ? group.keywords.indexOf(keyword) : -1;
+  if (index < 0) return '/articles/';
+  return '/articles/' + keywordArticleSlug(groupId, index, type) + '/';
+}
+
+function generatedKeywordArticles() {
+  return keywordGroups.flatMap((group) => {
+    const plan = keywordArticlePlans[group.id];
+    return group.keywords.flatMap((keyword, keywordIndex) => {
+      const guideSlug = keywordArticleSlug(group.id, keywordIndex, 'guide');
+      const checklistSlug = keywordArticleSlug(group.id, keywordIndex, 'checklist');
+      const checks = plan.guideChecks.map((item) => '- **' + item + '**：围绕“' + keyword + '”记录真实结果，并保留测试时间、设备和网络环境。').join('\n');
+      const guideMarkdown = [
+        '> 本文解释“' + keyword + '”的判断方法，不承诺永久稳定、永久解锁或任何无法持续验证的结果。',
+        '',
+        '## 先理解“' + keyword + '”在解决什么问题',
+        '',
+        plan.guideIntro + ' 搜索“' + keyword + '”时，建议先写下最重要的一个使用目标，再决定比较哪些指标。',
+        '',
+        '## 四个需要实际核对的指标',
+        '',
+        checks,
+        '',
+        '## 一套可重复的测试方法',
+        '',
+        '1. 使用当前常用设备和本地网络建立基准，不要同时更换多个变量。',
+        '2. 在白天、晚高峰和周末分别测试“' + keyword + '”对应的真实任务。',
+        '3. 记录连接成功率、连续使用时间、波动、流量消耗和异常现象。',
+        '4. 先选择短周期方案；结果稳定后，再决定是否续费或增加设备。',
+        '',
+        '## 如何阅读宣传与测评',
+        '',
+        '宣传页适合了解功能范围，测评适合学习测试方法，但二者都不能替代你的网络、账号和设备环境。涉及“' + keyword + '”的结论，应注明日期、测试条件和限制；没有条件说明的速度或解锁结论只能作为线索。',
+        '',
+        '## 下一步建议',
+        '',
+        '继续阅读同主题的[' + keyword + '排查清单](/articles/' + checklistSlug + '/)，也可以返回[' + group.title + '](' + group.href + ')或浏览[科学上网知识库](/articles/)。'
+      ].join('\n');
+      const checklistMarkdown = [
+        '> 这份清单用于快速核对“' + keyword + '”。遇到异常时按顺序检查，每完成一步再观察结果。',
+        '',
+        '## 购买或使用前的八项检查',
+        '',
+        '- 需求：是否明确常用设备、网络、地区和目标网站。',
+        '- 入口：官网、备用网址和公告是否能够相互验证。',
+        '- 套餐：流量、倍率、设备数、重置日和续费价格是否写清楚。',
+        '- 线路：是否说明入口、出口、备用节点和高峰期处理方式。',
+        '- 兼容：订阅格式是否适配你使用的客户端。',
+        '- 测试：能否先月付或试用，是否允许在真实场景中验证。',
+        '- 售后：工单、公告与退款边界是否明确。',
+        '- 风险：是否存在过度承诺、强推长期套餐或频繁更换入口等信号。',
+        '',
+        '## 出现问题时按什么顺序排查',
+        '',
+        '围绕“' + keyword + '”优先检查：' + plan.checklistFocus + '。先确认问题能否稳定复现，再更换一个变量进行对照。若普通网站也异常，应先处理本地网络；若只有单个目标失败，则检查地区、IP、DNS、账号或服务规则。',
+        '',
+        '## 常见误区',
+        '',
+        '1. 把单次测速当成长期稳定性。',
+        '2. 同时切换客户端、节点和 DNS，导致无法确认原因。',
+        '3. 只比较标价，不计算倍率、流量和设备限制。',
+        '4. 因折扣直接购买长期套餐，没有先做短周期测试。',
+        '',
+        '## 记录结果的最小模板',
+        '',
+        '记录日期、设备、系统、客户端版本、本地运营商、节点地区、测试时间、目标网站和异常现象。再次检查“' + keyword + '”时使用相同条件，才能判断变化来自线路还是本地环境。',
+        '',
+        '## 相关阅读',
+        '',
+        '先看[' + keyword + '完整指南](/articles/' + guideSlug + '/)，再到[' + group.title + '](' + group.href + ')查看同类关键词，或返回[专题目录](/topics/#' + group.id + ')。'
+      ].join('\n');
+      return [
+        { slug: guideSlug, title: plan.guideTitle(keyword), description: plan.guideDescription(keyword), category: plan.category, date: '2026-10-01', updated: '2026-10-22', readTime: '7 分钟', tags: [keyword, group.title, '实用指南'], featured: false, generated: true, keyword, keywordGroupId: group.id, ...markdownToHtml(guideMarkdown) },
+        { slug: checklistSlug, title: plan.checklistTitle(keyword), description: plan.checklistDescription(keyword), category: plan.category, date: '2026-09-30', updated: '2026-10-22', readTime: '6 分钟', tags: [keyword, group.title, '排查清单'], featured: false, generated: true, keyword, keywordGroupId: group.id, ...markdownToHtml(checklistMarkdown) }
+      ];
+    });
+  });
+}
+
 function activePath(current, target) {
   return current === target || (target !== '/' && current.startsWith(target));
 }
@@ -307,7 +485,7 @@ function brandBand() {
 }
 
 function homePage(articles) {
-  const latestCards = articles.slice(0, 6).map(articleCard).join('');
+  const latestCards = articles.filter((article) => !article.generated).slice(0, 6).map(articleCard).join('');
   const quickLinks = [
     ['机场推荐与测评', '光年梯、极连云测评与官网入口', '/brands/', '推荐'],
     ['IPLC 与专线', '直连、中转、BGP 和专线怎么比较', '/articles/iplc-vs-transit/', '线路'],
@@ -356,25 +534,32 @@ function standardHero(eyebrow, title, description) {
 
 function articlesPage(articles) {
   const articleMap = new Map(articles.map((article) => [article.slug, article]));
-  const groups = [
+  const editorialGroups = [
     { id: 'getting-started', title: '入门与选购', description: '机场怎么选、套餐怎么比较，以及新手需要先核对什么。', slugs: ['2026-airport-guide', 'how-to-choose-airport'] },
     { id: 'airport-reviews', title: '机场测评与推荐', description: '光年梯、极连云等机场入口、适用场景和购买前检查。', slugs: ['guangnianti-review', 'jilianyun-review'] },
     { id: 'network-cost', title: '线路、IP 与流量成本', description: '理解 IPLC、中转、节点倍率、原生 IP 与住宅 IP。', slugs: ['iplc-vs-transit', 'node-multiplier', 'native-residential-ip'] },
     { id: 'clients-troubleshooting', title: '客户端、订阅与故障排查', description: '处理订阅导入、节点异常、晚高峰和连接速度问题。', slugs: ['subscription-import', 'peak-hour-slow'] }
-  ];
-  const sidebar = groups.map((group) => '<a href="#' + group.id + '"><span>' + escapeHtml(group.title) + '</span><b>' + group.slugs.length + '</b></a>').join('');
-  const tableRows = groups.map((group) => '<tr><td><strong>' + escapeHtml(group.title) + '</strong></td><td>' + escapeHtml(group.description) + '</td><td><a class="text-link" href="#' + group.id + '">查看 ' + group.slugs.length + ' 篇 →</a></td></tr>').join('');
+  ].map((group) => ({ ...group, articles: group.slugs.map((slug) => articleMap.get(slug)).filter(Boolean) }));
+  const generatedGroups = keywordGroups.map((group) => ({
+    id: 'keyword-' + group.id,
+    title: group.title,
+    description: group.description + ' 每个关键词包含实用指南与排查清单。',
+    articles: articles.filter((article) => article.generated && article.keywordGroupId === group.id)
+  }));
+  const groups = editorialGroups.concat(generatedGroups);
+  const sidebar = groups.map((group) => '<a href="#' + group.id + '"><span>' + escapeHtml(group.title) + '</span><b>' + group.articles.length + '</b></a>').join('');
+  const tableRows = groups.map((group) => '<tr><td><strong>' + escapeHtml(group.title) + '</strong></td><td>' + escapeHtml(group.description) + '</td><td><a class="text-link" href="#' + group.id + '">查看 ' + group.articles.length + ' 篇 →</a></td></tr>').join('');
   const sections = groups.map((group) => {
-    const entries = group.slugs.map((slug) => articleMap.get(slug)).filter(Boolean).map((article) => '<a class="knowledge-entry" data-article-card href="/articles/' + article.slug + '/"><div class="knowledge-entry-meta"><span>' + escapeHtml(article.category) + '</span><span>' + escapeHtml(article.readTime) + '</span></div><div><h3>' + escapeHtml(article.title) + '</h3><p>' + escapeHtml(article.description) + '</p></div><b aria-hidden="true">→</b></a>').join('');
-    return '<section class="knowledge-section" id="' + group.id + '"><div class="knowledge-section-head"><div><h2>' + escapeHtml(group.title) + '</h2><p>' + escapeHtml(group.description) + '</p></div><span>' + group.slugs.length + ' 篇</span></div><div class="knowledge-list">' + entries + '</div></section>';
+    const entries = group.articles.map((article) => '<a class="knowledge-entry" data-article-card href="/articles/' + article.slug + '/"><div class="knowledge-entry-meta"><span>' + escapeHtml(article.category) + '</span><span>' + escapeHtml(article.readTime) + '</span></div><div><h3>' + escapeHtml(article.title) + '</h3><p>' + escapeHtml(article.description) + '</p></div><b aria-hidden="true">→</b></a>').join('');
+    return '<section class="knowledge-section" data-knowledge-section id="' + group.id + '"><div class="knowledge-section-head"><div><h2>' + escapeHtml(group.title) + '</h2><p>' + escapeHtml(group.description) + '</p></div><span>' + group.articles.length + ' 篇</span></div><div class="knowledge-list">' + entries + '</div></section>';
   }).join('');
-  const content = '<section class="knowledge-hero"><div class="knowledge-container"><div class="crumbs"><a href="/">首页</a> / 科学上网知识库</div><p class="eyebrow">PROXY KNOWLEDGE BASE</p><h1>科学上网知识库：机场、线路、客户端与排障指南</h1><p>从机场选择和订阅导入，到线路原理、节点倍率、IP 类型与晚高峰排查，按问题分类查找答案。</p></div></section><section class="knowledge-body"><div class="knowledge-container knowledge-layout"><aside class="knowledge-sidebar"><strong>知识库分类</strong><nav>' + sidebar + '</nav><a class="knowledge-side-link" href="/topics/">查看 148 个关键词 →</a></aside><div class="knowledge-main"><div class="search-wrap knowledge-search"><input class="search-input" data-article-search type="search" placeholder="搜索知识、场景或关键词…" aria-label="搜索科学上网知识库"></div><section class="knowledge-overview"><div class="knowledge-section-head"><div><p class="eyebrow">START HERE</p><h2>知识库分类导航</h2></div></div><table class="matrix knowledge-table"><thead><tr><th>分类</th><th>适合解决的问题</th><th>入口</th></tr></thead><tbody>' + tableRows + '</tbody></table></section>' + sections + '</div></div></section>';
+  const content = '<section class="knowledge-hero"><div class="knowledge-container"><div class="crumbs"><a href="/">首页</a> / 科学上网知识库</div><p class="eyebrow">PROXY KNOWLEDGE BASE / ' + articles.length + ' ARTICLES</p><h1>科学上网知识库：机场、线路、客户端与排障指南</h1><p>148 个关键词均已扩展为实用指南与排查清单，并保留机场测评、线路原理和客户端教程等编辑精选内容。</p></div></section><section class="knowledge-body"><div class="knowledge-container knowledge-layout"><aside class="knowledge-sidebar"><strong>知识库分类</strong><nav>' + sidebar + '</nav><a class="knowledge-side-link" href="/topics/">查看 148 个关键词 →</a></aside><div class="knowledge-main"><div class="search-wrap knowledge-search"><input class="search-input" data-article-search type="search" placeholder="搜索知识、场景或关键词…" aria-label="搜索科学上网知识库"></div><div class="knowledge-empty" data-article-empty hidden>没有找到匹配的文章，请尝试更短的关键词。</div><section class="knowledge-overview"><div class="knowledge-section-head"><div><p class="eyebrow">START HERE</p><h2>知识库分类导航</h2></div></div><table class="matrix knowledge-table"><thead><tr><th>分类</th><th>适合解决的问题</th><th>入口</th></tr></thead><tbody>' + tableRows + '</tbody></table></section>' + sections + '</div></div></section>';
   return layout({ title: '科学上网知识库', description: '机场选择、线路协议、客户端订阅、IP 类型、流量倍率与网络故障排查知识库。', path: '/articles/', content, schema: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: '科学上网知识库', url: config.baseUrl + '/articles/' } });
 }
 
 function guidesPage() {
   const groups = keywordGroups.filter((group) => ['choose', 'scenarios', 'price', 'compare'].includes(group.id));
-  const blocks = groups.map((group) => '<article class="topic-card" id="' + group.id + '"><h3>' + escapeHtml(group.title) + '</h3><p>' + escapeHtml(group.description) + '</p><div class="keyword-cloud">' + group.keywords.map((keyword) => '<a href="/topics/#' + group.id + '">' + escapeHtml(keyword) + '</a>').join('') + '</div></article>').join('');
+  const blocks = groups.map((group) => '<article class="topic-card" id="' + group.id + '"><h3>' + escapeHtml(group.title) + '</h3><p>' + escapeHtml(group.description) + '</p><div class="keyword-cloud">' + group.keywords.map((keyword) => '<a href="' + keywordArticlePath(group.id, keyword) + '">' + escapeHtml(keyword) + '</a>').join('') + '</div></article>').join('');
   const content = standardHero('CHOOSING GUIDE', '机场怎么选：先做需求题，再看价格表', '适合新手的选择框架。把“稳定、高速、便宜”拆成可测试的线路、时段、IP、设备和流量指标。') + '<section class="section"><div class="container"><div class="topic-grid">' + blocks + '</div><div class="section-sm" id="needs"><div class="notice">建议先买月付或试用，分别在工作日、周末和晚高峰测试自己的常用网站。不要只用测速数字替代真实体验。</div></div>' + brandBand() + '</div></section>';
   return layout({ title: '机场选择指南', description: '机场怎么选、机场避坑、预算套餐与使用场景选择指南。', path: '/guides/', content });
 }
@@ -382,13 +567,13 @@ function guidesPage() {
 function clientsPage() {
   const rows = clientMatrix.map((row) => '<tr><td><strong>' + escapeHtml(row[0]) + '</strong></td><td>' + escapeHtml(row[1]) + '</td><td>' + escapeHtml(row[2]) + '</td></tr>').join('');
   const group = keywordGroups.find((item) => item.id === 'protocols');
-  const content = standardHero('CLIENT MATRIX', '一个订阅，如何在四类设备上正确导入', '按操作系统和订阅格式选择客户端。页面不提供来历不明的安装包，只讲配置与排障。') + '<section class="section"><div class="container"><table class="matrix"><thead><tr><th>系统</th><th>常见客户端</th><th>检查重点</th></tr></thead><tbody>' + rows + '</tbody></table><div class="section-sm"><h2>客户端与协议关键词</h2><div class="keyword-cloud">' + group.keywords.map((keyword) => '<a href="/articles/subscription-import/">' + escapeHtml(keyword) + '</a>').join('') + '</div></div><div class="notice">Clash for Windows 已停止维护。内容中保留该关键词用于解释迁移路径，实际使用时应优先选择仍在维护且来源可信的客户端。</div></div></section>';
+  const content = standardHero('CLIENT MATRIX', '一个订阅，如何在四类设备上正确导入', '按操作系统和订阅格式选择客户端。页面不提供来历不明的安装包，只讲配置与排障。') + '<section class="section"><div class="container"><table class="matrix"><thead><tr><th>系统</th><th>常见客户端</th><th>检查重点</th></tr></thead><tbody>' + rows + '</tbody></table><div class="section-sm"><h2>客户端与协议关键词</h2><div class="keyword-cloud">' + group.keywords.map((keyword) => '<a href="' + keywordArticlePath(group.id, keyword) + '">' + escapeHtml(keyword) + '</a>').join('') + '</div></div><div class="notice">Clash for Windows 已停止维护。内容中保留该关键词用于解释迁移路径，实际使用时应优先选择仍在维护且来源可信的客户端。</div></div></section>';
   return layout({ title: '机场客户端指南', description: 'Windows、Mac、Android、iOS 机场客户端与订阅导入指南。', path: '/clients/', content });
 }
 
 function networkPage() {
   const group = keywordGroups.find((item) => item.id === 'troubleshooting');
-  const cards = group.keywords.map((keyword, index) => '<a class="route-card" href="/articles/' + (index < 2 ? 'subscription-import' : 'peak-hour-slow') + '/"><span class="route-no">CHECK ' + String(index + 1).padStart(2, '0') + '</span><h3>' + escapeHtml(keyword) + '</h3><p>按本地网络、系统代理、订阅、节点、DNS 与目标网站逐层检查。</p></a>').join('');
+  const cards = group.keywords.map((keyword, index) => '<a class="route-card" href="' + keywordArticlePath(group.id, keyword, 'checklist') + '"><span class="route-no">CHECK ' + String(index + 1).padStart(2, '0') + '</span><h3>' + escapeHtml(keyword) + '</h3><p>按本地网络、系统代理、订阅、节点、DNS 与目标网站逐层检查。</p></a>').join('');
   const content = standardHero('TROUBLESHOOTING', '不要反复重装：按层级定位连接问题', '从“完全无法连接”到“只有某个网站打不开”，不同现象对应不同检查顺序。') + '<section class="section"><div class="container"><div class="route-grid">' + cards + '</div></div></section>';
   return layout({ title: '机场故障排查', description: '订阅失败、节点不显示、速度慢、连接超时与客户端配置错误排查。', path: '/network/', content });
 }
@@ -396,12 +581,12 @@ function networkPage() {
 function regionsPage() {
   const group = keywordGroups.find((item) => item.id === 'regions');
   const cards = regionCards.map((region) => '<article class="region-card"><h3>' + escapeHtml(region[0]) + '</h3><p>' + escapeHtml(region[1]) + '</p></article>').join('');
-  const content = standardHero('REGION NOTES', '节点地区不是越多越好，匹配任务才重要', '地理距离决定基础延迟，线路与回程决定波动，IP 属性决定内容解锁和账号风控。') + '<section class="section"><div class="container"><div class="region-grid">' + cards + '</div><div class="section-sm"><h2>地区与专项线路索引</h2><div class="keyword-cloud">' + group.keywords.map((keyword) => '<a href="/topics/#regions">' + escapeHtml(keyword) + '</a>').join('') + '</div></div></div></section>';
+  const content = standardHero('REGION NOTES', '节点地区不是越多越好，匹配任务才重要', '地理距离决定基础延迟，线路与回程决定波动，IP 属性决定内容解锁和账号风控。') + '<section class="section"><div class="container"><div class="region-grid">' + cards + '</div><div class="section-sm"><h2>地区与专项线路索引</h2><div class="keyword-cloud">' + group.keywords.map((keyword) => '<a href="' + keywordArticlePath(group.id, keyword) + '">' + escapeHtml(keyword) + '</a>').join('') + '</div></div></div></section>';
   return layout({ title: '机场地区与节点指南', description: '香港、日本、新加坡、美国及其他地区节点选择指南。', path: '/regions/', content });
 }
 
 function topicsPage() {
-  const groups = keywordGroups.map((group) => '<section class="topic-card" id="' + group.id + '"><h3>' + escapeHtml(group.title) + '</h3><p>' + escapeHtml(group.description) + '</p><div class="keyword-cloud">' + group.keywords.map((keyword) => '<a href="' + group.href + '">' + escapeHtml(keyword) + '</a>').join('') + '</div></section>').join('');
+  const groups = keywordGroups.map((group) => '<section class="topic-card topic-index-card" id="' + group.id + '"><div class="topic-index-head"><div><h3>' + escapeHtml(group.title) + '</h3><p>' + escapeHtml(group.description) + '</p></div><span>' + group.keywords.length + ' 词 / ' + (group.keywords.length * 2) + ' 篇</span></div><div class="topic-keyword-list">' + group.keywords.map((keyword) => '<div class="topic-keyword-row"><a href="' + keywordArticlePath(group.id, keyword) + '"><strong>' + escapeHtml(keyword) + '</strong><span>实用指南 →</span></a><a href="' + keywordArticlePath(group.id, keyword, 'checklist') + '">排查清单</a></div>').join('') + '</div></section>').join('');
   const count = keywordGroups.reduce((total, group) => total + group.keywords.length, 0);
   const content = standardHero('TOPIC INDEX / ' + count + ' TERMS', '全部关键词，按搜索意图组织成内容专题', '每个关键词都指向相关的指南、文章或排障页面。后续更新内容时，可以继续在对应专题下扩展。') + '<section class="section"><div class="container"><div class="topic-grid">' + groups + '</div></div></section>';
   return layout({ title: '机场关键词专题索引', description: '机场推荐、客户端、线路、地区、价格和故障排查关键词专题索引。', path: '/topics/', content, schema: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: '机场关键词专题索引', url: config.baseUrl + '/topics/' } });
@@ -445,7 +630,8 @@ function comparePage() {
 function questionsPage() {
   const troubleshooting = keywordGroups.find((item) => item.id === 'troubleshooting');
   const subscription = keywordGroups.find((item) => item.id === 'subscription');
-  const items = troubleshooting.keywords.concat(subscription.keywords).map((keyword, index) => '<a class="route-card question-card" href="/articles/' + (index % 2 ? 'subscription-import' : 'peak-hour-slow') + '/"><span class="route-no">Q' + String(index + 1).padStart(2, '0') + '</span><h3>' + escapeHtml(keyword) + '</h3><p>查看现象、原因和逐层检查顺序。</p></a>').join('');
+  const questionKeywords = troubleshooting.keywords.map((keyword) => [troubleshooting.id, keyword]).concat(subscription.keywords.map((keyword) => [subscription.id, keyword]));
+  const items = questionKeywords.map((item, index) => '<a class="route-card question-card" href="' + keywordArticlePath(item[0], item[1], 'checklist') + '"><span class="route-no">Q' + String(index + 1).padStart(2, '0') + '</span><h3>' + escapeHtml(item[1]) + '</h3><p>查看现象、原因和逐层检查顺序。</p></a>').join('');
   const content = standardHero('QUESTION DESK', '问题库：先找现象，再按顺序排查', '覆盖订阅失败、节点不显示、速度慢、连接超时、网页打不开和客户端配置错误。') + '<section class="section"><div class="container"><div class="route-grid">' + items + '</div></div></section>';
   return layout({ title: '机场问题库', description: '机场订阅、节点、连接、速度和客户端问题排查知识库。', path: '/questions/', content });
 }
@@ -511,7 +697,8 @@ async function build() {
   await fs.copyFile(path.join(root, 'src', 'app.js'), path.join(outDir, 'assets', 'app.js'));
   await fs.copyFile(path.join(root, 'src', 'network-globe.svg'), path.join(outDir, 'assets', 'network-globe.svg'));
 
-  const articles = await readArticles();
+  const editorialArticles = await readArticles();
+  const articles = editorialArticles.concat(generatedKeywordArticles());
   await writePage('', homePage(articles));
   await writePage('articles', articlesPage(articles));
   await writePage('guides', guidesPage());
@@ -536,7 +723,7 @@ async function build() {
   await fs.writeFile(path.join(outDir, 'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: ' + config.baseUrl + '/sitemap.xml\n', 'utf8');
   await fs.writeFile(path.join(outDir, 'CNAME'), new URL(config.baseUrl).hostname + '\n', 'utf8');
 
-  const rssItems = articles.slice(0, 20).map((article) => '<item><title>' + xmlEscape(article.title) + '</title><link>' + config.baseUrl + '/articles/' + article.slug + '/</link><guid>' + config.baseUrl + '/articles/' + article.slug + '/</guid><pubDate>' + new Date(article.date + 'T08:00:00+08:00').toUTCString() + '</pubDate><description>' + xmlEscape(article.description) + '</description></item>').join('');
+  const rssItems = editorialArticles.slice(0, 20).map((article) => '<item><title>' + xmlEscape(article.title) + '</title><link>' + config.baseUrl + '/articles/' + article.slug + '/</link><guid>' + config.baseUrl + '/articles/' + article.slug + '/</guid><pubDate>' + new Date(article.date + 'T08:00:00+08:00').toUTCString() + '</pubDate><description>' + xmlEscape(article.description) + '</description></item>').join('');
   const rss = '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>' + xmlEscape(config.siteName) + '</title><link>' + config.baseUrl + '</link><description>' + xmlEscape(config.description) + '</description><language>zh-cn</language>' + rssItems + '</channel></rss>';
   await fs.writeFile(path.join(outDir, 'rss.xml'), rss, 'utf8');
   console.log('Built ' + urls.length + ' pages and ' + articles.length + ' articles into dist/.');
